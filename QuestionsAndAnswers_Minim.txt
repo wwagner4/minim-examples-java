@@ -1,0 +1,20 @@
+Minim Questions and answers
+
+Q: How can I load a short piece into memory and play it several times?
+A: Use minim 'loadAudioSample' to do so.
+
+Q: How many times can an a piece loaded into an 'AudioSample' beeing played in parallel?
+A: Up to twenty times
+
+Q: The 'playNote(...)' method on 'AudioOutput' plays midi-instruments? 
+A: The 'playNote' does not play midi-notes. It plays the 'DefaultInstrument' that is composed out of ugens.
+
+Q: Is there also a ugen that plays midi-instruments?
+A: No
+
+Q: What is the main principle behind Minim creating music.
+A: Design your instruments and then play them using 'playNotes' of 'AudioOutput'
+
+
+
+
