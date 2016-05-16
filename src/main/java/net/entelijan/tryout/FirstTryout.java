@@ -8,59 +8,53 @@ import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 
-public class FirstTryout
-{
+public class FirstTryout {
 
-	public static void main(String[] args) throws InterruptedException
-	{
+	public static void main(String[] args) throws InterruptedException {
 		Random ran = new Random();
 
 		FileLoader fileLoader = new FileLoader();
-		MinimServiceProvider serviceProvider = new JSMinim( fileLoader );
-		System.out.println( "Created a service provider: " + serviceProvider );
-		Minim minim = new Minim( serviceProvider );
-		System.out.println( "Created minim: " + minim );
+		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
+		System.out.println("Created a service provider: " + serviceProvider);
+		Minim minim = new Minim(serviceProvider);
+		System.out.println("Created minim: " + minim);
 
 		AudioOutput out = minim.getLineOut();
-		System.out.println( "Created audio output: " + out );
+		System.out.println("Created audio output: " + out);
 
-		out.setTempo( 60 );
+		out.setTempo(60);
 
 		out.pauseNotes();
-		playNote( out, ran, 0.0 );
-		playNote( out, ran, 3.0 );
-		playNote( out, ran, 4.0 );
+		playNote(out, ran, 0.0);
+		playNote(out, ran, 3.0);
+		playNote(out, ran, 4.0);
 
 		out.resumeNotes();
-		System.out.println( "Resumed notes" );
+		System.out.println("Resumed notes");
 
-		int seconds = 15; 
-		Thread.sleep( seconds * 1000 );
+		int seconds = 15;
+		Thread.sleep(seconds * 1000);
 		out.close();
-		System.out.printf( "Closed after %ds%n", seconds );
+		System.out.printf("Closed after %ds%n", seconds);
 
 	}
 
-	private static void playNote(AudioOutput out, Random ran, Double time)
-	{
+	private static void playNote(AudioOutput out, Random ran, Double time) {
 		float t = time.floatValue();
-		out.playNote( t, 6f, 97.99f + ran.nextFloat() * 5f );
-		out.playNote( t, 5f, 200f + ran.nextFloat() * 5f );
-		out.playNote( t, 4f, 200f + ran.nextFloat() * 5f );
-		out.playNote( t, 3f, 200f + ran.nextFloat() * 5f );
+		out.playNote(t, 6f, 97.99f + ran.nextFloat() * 5f);
+		out.playNote(t, 5f, 200f + ran.nextFloat() * 5f);
+		out.playNote(t, 4f, 200f + ran.nextFloat() * 5f);
+		out.playNote(t, 3f, 200f + ran.nextFloat() * 5f);
 	}
 
-	public static class FileLoader
-	{
+	public static class FileLoader {
 
-		public String sketchPath(String fileName)
-		{
-			throw new IllegalStateException( "Not yet implemented" );
+		public String sketchPath(String fileName) {
+			throw new IllegalStateException("Not yet implemented");
 		}
 
-		public InputStream createInput(String fileName)
-		{
-			throw new IllegalStateException( "Not yet implemented" );
+		public InputStream createInput(String fileName) {
+			throw new IllegalStateException("Not yet implemented");
 		}
 
 	}
