@@ -1,12 +1,12 @@
 package net.entelijan.tryout;
 
-import java.io.InputStream;
 import java.util.Random;
 
 import ddf.minim.AudioOutput;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
+import net.entelijan.tryout.common.FileLoader;
 
 public class FirstTryout {
 
@@ -47,15 +47,4 @@ public class FirstTryout {
 		out.playNote(t, 3f, 200f + ran.nextFloat() * 5f);
 	}
 
-	public static class FileLoader {
-
-		public String sketchPath(String fileName) {
-			throw new IllegalStateException("Not yet implemented");
-		}
-
-		public InputStream createInput(String fileName) {
-			throw new IllegalStateException("Not yet implemented");
-		}
-
-	}
 }
