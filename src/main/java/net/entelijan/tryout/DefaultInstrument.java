@@ -11,21 +11,21 @@ import net.entelijan.tryout.common.FileLoader;
 public class DefaultInstrument {
 
 	private void run(Ctx ctx) throws InterruptedException {
-		ctx.out.setTempo(50);
+		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
-		double base = 220;
-		for (int i = 0; i < 25; i++) {
-			seqB(base * r(1.5, ctx.ran), i * r(1.7, ctx.ran) * 3, ctx);
+		double base = 300;
+		for (int i = 0; i < 50; i++) {
+			seqB(base * r(1.8, ctx.ran), i * r(1.3, ctx.ran) * 10, ctx);
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(120, ctx);
+		waitAndClose(500, ctx);
 	}
 
 	private void seqB(double base, double time, Ctx ctx) {
 		seqA(base * r(1.1, ctx.ran), time + 0, ctx);
-		seqD(base * r(1.1, ctx.ran), time + 5, ctx);
+		seqD(base * r(1.1, ctx.ran), time + 10, ctx);
 		seqA(base * r(1.1, ctx.ran), time + 20, ctx);
-		seqD(base * r(1.1, ctx.ran), time + 25, ctx);
+		seqD(base * r(1.1, ctx.ran), time + 30, ctx);
 	}
 
 	private void seqA(double frq, double time, Ctx ctx) {
@@ -52,10 +52,14 @@ public class DefaultInstrument {
 		playNote(f, time + 0.8, ctx);
 		f *= 0.9;
 		playNote(f, time + 1.3, ctx);
+		f *= 0.9;
+		playNote(f, time + 2.1, ctx);
+		f *= 0.9;
+		playNote(f, time + 3.4, ctx);
 	}
 
 	private void playNote(double frq, double time, Ctx ctx) {
-		ctx.out.playNote(f(time), 0.6f * r(1.5, ctx.ran), f(frq) * r(1.2, ctx.ran));
+		ctx.out.playNote(f(time), 1.1f * r(1.5, ctx.ran), f(frq) * r(1.1, ctx.ran));
 	}
 
 	private float f(double val) {
