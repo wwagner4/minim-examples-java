@@ -31,31 +31,46 @@ public class DefaultInstrument {
 
 		Ctx ctx = new Ctx(out, ran);
 
-		out.setTempo(60);
+		out.setTempo(100);
 
 		out.pauseNotes();
-		playNote(0.0, ctx);
-		playNote(3.0, ctx);
-		playNote(4.0, ctx);
+		
+		seqB(0, ctx);
+		seqB(8, ctx);
+		seqB(10, ctx);
 
 		out.resumeNotes();
-		System.out.println("Resumed notes");
 
-		waitAndClose(15, ctx);
+		waitAndClose(30, ctx);
+	}
+
+	private void seqB(double time, Ctx ctx) {
+		double base = 170;
+		seqA(base, time + 0, ctx);
+		seqA(base * 4.0 / 3.0, time + 3, ctx);
+		seqA(base * 3.0 / 2.0, time + 4, ctx);
+		seqA(base, time + 7, ctx);
+	}
+
+	private void seqA(double frq, double time, Ctx ctx) {
+		playNote(frq, time + 0.0, ctx);
+		playNote(frq, time + 0.5, ctx);
+		playNote(frq, time + 6.0, ctx);
+		playNote(frq, time + 6.25, ctx);
+	}
+
+	private void playNote(double frq, double time, Ctx ctx) {
+		ctx.out.playNote(f(time), 3f, f(frq) + ctx.ran.nextFloat() * 5f);
+	}
+
+	private float f(double val) {
+		return Double.valueOf(val).floatValue();
 	}
 
 	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
 		Thread.sleep(seconds * 1000);
 		ctx.out.close();
 		System.out.printf("Closed after %ds%n", seconds);
-	}
-
-	private void playNote(Double time, Ctx ctx) {
-		float t = time.floatValue();
-		ctx.out.playNote(t, 6f, 97.99f + ctx.ran.nextFloat() * 5f);
-		ctx.out.playNote(t, 5f, 200f + ctx.ran.nextFloat() * 5f);
-		ctx.out.playNote(t, 4f, 200f + ctx.ran.nextFloat() * 5f);
-		ctx.out.playNote(t, 3f, 200f + ctx.ran.nextFloat() * 5f);
 	}
 
 	private static class Ctx {
