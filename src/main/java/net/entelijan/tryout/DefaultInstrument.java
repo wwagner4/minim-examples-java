@@ -9,7 +9,7 @@ import ddf.minim.spi.MinimServiceProvider;
 import net.entelijan.tryout.common.FileLoader;
 
 public class DefaultInstrument {
-	public static void main(String[] args)  {
+	public static void main(String[] args) {
 		try {
 			new DefaultInstrument().run();
 		} catch (InterruptedException e) {
@@ -29,31 +29,44 @@ public class DefaultInstrument {
 		AudioOutput out = minim.getLineOut();
 		System.out.println("Created audio output: " + out);
 
+		Ctx ctx = new Ctx(out, ran);
+
 		out.setTempo(60);
 
 		out.pauseNotes();
-		playNote(out, ran, 0.0);
-		playNote(out, ran, 3.0);
-		playNote(out, ran, 4.0);
+		playNote(0.0, ctx);
+		playNote(3.0, ctx);
+		playNote(4.0, ctx);
 
 		out.resumeNotes();
 		System.out.println("Resumed notes");
 
-		waitAndClose(15, out);
+		waitAndClose(15, ctx);
 	}
 
-	private void waitAndClose(int seconds, AudioOutput out) throws InterruptedException {
+	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
 		Thread.sleep(seconds * 1000);
-		out.close();
+		ctx.out.close();
 		System.out.printf("Closed after %ds%n", seconds);
 	}
 
-	private void playNote(AudioOutput out, Random ran, Double time) {
+	private void playNote(Double time, Ctx ctx) {
 		float t = time.floatValue();
-		out.playNote(t, 6f, 97.99f + ran.nextFloat() * 5f);
-		out.playNote(t, 5f, 200f + ran.nextFloat() * 5f);
-		out.playNote(t, 4f, 200f + ran.nextFloat() * 5f);
-		out.playNote(t, 3f, 200f + ran.nextFloat() * 5f);
+		ctx.out.playNote(t, 6f, 97.99f + ctx.ran.nextFloat() * 5f);
+		ctx.out.playNote(t, 5f, 200f + ctx.ran.nextFloat() * 5f);
+		ctx.out.playNote(t, 4f, 200f + ctx.ran.nextFloat() * 5f);
+		ctx.out.playNote(t, 3f, 200f + ctx.ran.nextFloat() * 5f);
+	}
+
+	private static class Ctx {
+		private AudioOutput out;
+		private Random ran;
+
+		public Ctx(AudioOutput out, Random ran) {
+			super();
+			this.out = out;
+			this.ran = ran;
+		}
 	}
 
 }
