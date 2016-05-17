@@ -13,12 +13,16 @@ public class DefaultInstrument {
 	private void run(Ctx ctx) throws InterruptedException {
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
+		seqE(ctx);
+		ctx.out.resumeNotes();
+		waitAndClose(500, ctx);
+	}
+
+	private void seqE(Ctx ctx) {
 		double base = 300;
 		for (int i = 0; i < 50; i++) {
 			seqB(base * r(1.8, ctx.ran), i * r(1.3, ctx.ran) * 10, ctx);
 		}
-		ctx.out.resumeNotes();
-		waitAndClose(500, ctx);
 	}
 
 	private void seqB(double base, double time, Ctx ctx) {
