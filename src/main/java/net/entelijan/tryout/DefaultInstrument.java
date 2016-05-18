@@ -20,7 +20,7 @@ public class DefaultInstrument {
 		seqE(ctx);
 		ctx.rec.beginRecord();
 		ctx.out.resumeNotes();
-		waitAndClose(10, ctx);
+		waitAndClose(60, ctx);
 	}
 
 	private void seqE(Ctx ctx) {
@@ -85,9 +85,7 @@ public class DefaultInstrument {
 	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
 		try {
 			Thread.sleep(seconds * 1000);
-			ctx.rec.endRecord();
 			ctx.rec.save();
-			Thread.sleep(1000);
 		} finally {
 			ctx.out.close();
 			System.out.printf("Closed after %ds%n", seconds);

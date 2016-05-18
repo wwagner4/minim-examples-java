@@ -2,7 +2,6 @@ package net.entelijan.tryout.common;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 public class FileLoader {
@@ -14,12 +13,8 @@ public class FileLoader {
 
 	public InputStream createInput(String fileName) {
 		try {
-			File file = getCreateFile(fileName);
-			if (!file.exists()) {
-				file.createNewFile();
-			}
-			return new FileInputStream(file);
-		} catch (IOException e) {
+			return new FileInputStream(fileName);
+		} catch (Exception e) {
 			System.err.println("Error creating input stream. " + e.getMessage());
 			return null;
 		}
