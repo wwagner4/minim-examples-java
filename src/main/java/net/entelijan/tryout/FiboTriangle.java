@@ -8,6 +8,8 @@ import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 
+import static net.entelijan.tryout.MinimUtil.*;
+
 public class FiboTriangle {
 	
 	private final String fileName = "fibo_triangle_01.wav";
@@ -71,10 +73,6 @@ public class FiboTriangle {
 
 	private void playNote(double frq, double time, Ctx ctx) {
 		ctx.out.playNote(f(time), 1.1f * r(1.5, ctx.ran), f(frq) * r(1.1, ctx.ran));
-	}
-
-	private float f(double val) {
-		return Double.valueOf(val).floatValue();
 	}
 
 	private float r(double val, Random ran) {
