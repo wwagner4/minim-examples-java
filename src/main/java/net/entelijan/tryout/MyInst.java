@@ -9,6 +9,7 @@ import ddf.minim.AudioRecorder;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
+import ddf.minim.ugens.Damp;
 import ddf.minim.ugens.Instrument;
 import ddf.minim.ugens.Oscil;
 import ddf.minim.ugens.Waves;
@@ -16,7 +17,7 @@ import ddf.minim.ugens.Waves;
 public class MyInst {
 
 	private final String fileName = "myinst_01.wav";
-	private final boolean recording = false;
+	private final boolean recording = true;
 
 	private static class Inst implements Instrument {
 
@@ -25,21 +26,27 @@ public class MyInst {
 
 		private Oscil toneOsc;
 
+		private Damp damp;
+
 		public Inst(AudioOutput out, double freq) {
 			super();
 			this.out = out;
 			this.freq = freq;
-			toneOsc = new Oscil(f(this.freq), 0.4f, Waves.TRIANGLE);
+			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.TRIANGLE);
+			damp = new Damp(0.1f, 2f);
+
+			toneOsc.patch(damp);
 		}
 
 		@Override
 		public void noteOn(float duration) {
-			toneOsc.patch(out);
+			damp.patch(out);
+			damp.activate();
 		}
 
 		@Override
 		public void noteOff() {
-			toneOsc.unpatch(out);
+			damp.unpatch(out);
 		}
 
 	}
@@ -49,16 +56,28 @@ public class MyInst {
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
 
-		double f = 400 * r(1.1, ctx.ran);
-		Instrument i = new Inst(ctx.out, f);
-
-		ctx.out.playNote(0, 4, i);
+		for (int i = 0; i < 20; i += 4) {
+			playNote(i + 0, 400, ctx);
+			playNote(i + 1, 400, ctx);
+			playNote(i + 1.1, 300, ctx);
+			playNote(i + 1.5, 200, ctx);
+			playNote(i + 2, 400, ctx);
+			playNote(i + 2.1, 300, ctx);
+			playNote(i + 2.5, 200, ctx);
+			playNote(i + 3, 400, ctx);
+		}
 
 		if (recording) {
 			ctx.rec.beginRecord();
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(5, ctx);
+		waitAndClose(20, ctx);
+	}
+
+	private void playNote(double time, double fbase, Ctx ctx) {
+		double f = fbase * r(1.1, ctx.ran);
+		Instrument i = new Inst(ctx.out, f);
+		ctx.out.playNote(f(time), 4, i);
 	}
 
 	private float r(double val, Random ran) {
@@ -85,11 +104,11 @@ public class MyInst {
 		Minim minim = new Minim(serviceProvider);
 		System.out.println("Created minim: " + minim);
 		AudioOutput out = minim.getLineOut();
-		
+
 		AudioRecorder rec = null;
 		if (recording) {
 			rec = minim.createRecorder(out, fileName);
-		} 
+		}
 		Ctx ctx = new Ctx(out, ran, rec);
 		run(ctx);
 	}
