@@ -1,4 +1,4 @@
-package net.entelijan.tryout.common;
+package net.entelijan.tryout;
 
 import java.io.File;
 import java.io.FileInputStream;

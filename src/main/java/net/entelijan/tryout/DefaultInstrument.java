@@ -7,11 +7,10 @@ import ddf.minim.AudioRecorder;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
-import net.entelijan.tryout.common.FileLoader;
 
 public class DefaultInstrument {
 	
-	private final String fileName = "minim_definst.wav";
+	private final String fileName = "minim_definst_01.wav";
 
 	private void run(Ctx ctx) throws InterruptedException {
 
