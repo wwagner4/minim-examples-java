@@ -8,9 +8,9 @@ import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 
-public class DefaultInstrument {
+public class FiboTriangle {
 	
-	private final String fileName = "minim_definst_01.wav";
+	private final String fileName = "fibo_triangle_01.wav";
 
 	private void run(Ctx ctx) throws InterruptedException {
 
@@ -105,7 +105,7 @@ public class DefaultInstrument {
 
 	public static void main(String[] args) {
 		try {
-			new DefaultInstrument().run();
+			new FiboTriangle().run();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
