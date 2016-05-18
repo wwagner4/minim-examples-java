@@ -16,8 +16,8 @@ import ddf.minim.ugens.Waves;
 
 public class MyInst {
 
-	private final String fileName = "myinst_01.wav";
-	private final boolean recording = true;
+	private final String fileName = "myinst_03.wav";
+	private final boolean recording = false;
 
 	private static class Inst implements Instrument {
 
@@ -33,7 +33,7 @@ public class MyInst {
 			this.out = out;
 			this.freq = freq;
 			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.TRIANGLE);
-			damp = new Damp(0.1f, 2f);
+			damp = new Damp(0.01f, 0.5f, 1.0f);
 
 			toneOsc.patch(damp);
 		}
@@ -41,6 +41,7 @@ public class MyInst {
 		@Override
 		public void noteOn(float duration) {
 			damp.patch(out);
+			damp.setDampTimeFromDuration(duration);
 			damp.activate();
 		}
 
@@ -53,18 +54,34 @@ public class MyInst {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(80);
+		ctx.out.setTempo(100);
 		ctx.out.pauseNotes();
 
-		for (int i = 0; i < 20; i += 4) {
-			playNote(i + 0, 400, ctx);
-			playNote(i + 1, 400, ctx);
-			playNote(i + 1.1, 300, ctx);
-			playNote(i + 1.5, 200, ctx);
-			playNote(i + 2, 400, ctx);
-			playNote(i + 2.1, 300, ctx);
-			playNote(i + 2.5, 200, ctx);
-			playNote(i + 3, 400, ctx);
+		for (int i = 0; i < 30; i += 3) {
+			double baseDur = 0.5;
+			double baseDiff = 1.0;
+			double speedFac = 0.6;
+			
+			double freq = 444;
+			double freqFac = 0.8;
+			
+			
+			playNote(i + 0, baseDur * r(4, ctx.ran), freq, ctx);
+			double diff = baseDiff;
+			freq = freq * freqFac;
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			diff = baseDiff + diff * speedFac;
+			freq = freq * freqFac;
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			diff = baseDiff + diff * speedFac;
+			freq = freq * freqFac;
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			diff = baseDiff + diff * speedFac;
+			freq = freq * freqFac;
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			diff = baseDiff + diff * speedFac;
+			freq = freq * freqFac;
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
 		}
 
 		if (recording) {
@@ -74,10 +91,10 @@ public class MyInst {
 		waitAndClose(20, ctx);
 	}
 
-	private void playNote(double time, double fbase, Ctx ctx) {
+	private void playNote(double time, double dur, double fbase, Ctx ctx) {
 		double f = fbase * r(1.1, ctx.ran);
 		Instrument i = new Inst(ctx.out, f);
-		ctx.out.playNote(f(time), 4, i);
+		ctx.out.playNote(f(time), f(dur), i);
 	}
 
 	private float r(double val, Random ran) {
