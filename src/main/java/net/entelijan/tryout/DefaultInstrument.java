@@ -15,21 +15,24 @@ public class DefaultInstrument {
 		ctx.out.pauseNotes();
 		seqE(ctx);
 		ctx.out.resumeNotes();
-		waitAndClose(500, ctx);
+		waitAndClose(60, ctx);
 	}
 
 	private void seqE(Ctx ctx) {
 		double base = 300;
-		for (int i = 0; i < 50; i++) {
-			seqB(base * r(1.8, ctx.ran), i * r(1.3, ctx.ran) * 10, ctx);
-		}
+		seqB(base * r(1.8, ctx.ran), 0, ctx);
+		seqB(base * r(1.8, ctx.ran), 2 + r(1.1, ctx.ran), ctx);
+		seqB(base * r(1.8, ctx.ran), 6 + r(1.1, ctx.ran), ctx);
+		seqB(base * r(1.8, ctx.ran), 9 + r(1.1, ctx.ran), ctx);
+		seqB(base * r(1.8, ctx.ran), 20 + r(1.1, ctx.ran), ctx);
+		seqB(base * r(1.8, ctx.ran), 35 + r(1.1, ctx.ran), ctx);
 	}
 
 	private void seqB(double base, double time, Ctx ctx) {
-		seqA(base * r(1.1, ctx.ran), time + 0, ctx);
-		seqD(base * r(1.1, ctx.ran), time + 10, ctx);
-		seqA(base * r(1.1, ctx.ran), time + 20, ctx);
-		seqD(base * r(1.1, ctx.ran), time + 30, ctx);
+		seqA(base * r(1.1, ctx.ran), time + 0 + r(1.1, ctx.ran), ctx);
+		seqD(base * r(1.1, ctx.ran), time + 10 + r(1.1, ctx.ran), ctx);
+		seqA(base * r(1.1, ctx.ran), time + 20 + r(1.1, ctx.ran), ctx);
+		seqD(base * r(1.1, ctx.ran), time + 30 + r(1.1, ctx.ran), ctx);
 	}
 
 	private void seqA(double frq, double time, Ctx ctx) {
