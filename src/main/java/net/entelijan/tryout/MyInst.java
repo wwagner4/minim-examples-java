@@ -7,18 +7,48 @@ import ddf.minim.AudioRecorder;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
+import ddf.minim.ugens.DefaultInstrument;
+import ddf.minim.ugens.Instrument;
+import ddf.minim.ugens.Oscil;
+import ddf.minim.ugens.Waves;
 
 public class MyInst {
-	
+
 	private final String fileName = "myinst_01.wav";
+
+	private static class Inst implements Instrument {
+
+		private AudioOutput out;
+
+		private Oscil toneOsc = new Oscil(333f, 0.4f, Waves.TRIANGLE);
+
+		public Inst(AudioOutput out) {
+			super();
+			this.out = out;
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			toneOsc.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			toneOsc.unpatch(out);
+		}
+
+	}
 
 	private void run(Ctx ctx) throws InterruptedException {
 
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
-		
-		ctx.out.playNote(400 * r(1.1, ctx.ran));
-		
+
+		float f = 400 * r(1.1, ctx.ran);
+		Instrument i = new Inst(ctx.out);
+
+		ctx.out.playNote(0, 4, i);
+
 		ctx.rec.beginRecord();
 		ctx.out.resumeNotes();
 		waitAndClose(5, ctx);

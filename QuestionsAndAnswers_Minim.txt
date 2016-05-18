@@ -15,6 +15,7 @@ A: No
 Q: What is the main principle behind Minim creating music.
 A: Design your instruments and then play them using 'playNotes' of 'AudioOutput'
 
-
+Q: What audioformats can be written using minim
+A: At least wav. ???
 
 
