@@ -3,19 +3,24 @@ package net.entelijan.tryout;
 import java.util.Random;
 
 import ddf.minim.AudioOutput;
+import ddf.minim.AudioRecorder;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import net.entelijan.tryout.common.FileLoader;
 
 public class DefaultInstrument {
+	
+	private final String fileName = "minim.wav";
 
 	private void run(Ctx ctx) throws InterruptedException {
+
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
 		seqE(ctx);
+		ctx.rec.beginRecord();
 		ctx.out.resumeNotes();
-		waitAndClose(60, ctx);
+		waitAndClose(10, ctx);
 	}
 
 	private void seqE(Ctx ctx) {
@@ -78,9 +83,15 @@ public class DefaultInstrument {
 	}
 
 	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
-		Thread.sleep(seconds * 1000);
-		ctx.out.close();
-		System.out.printf("Closed after %ds%n", seconds);
+		try {
+			Thread.sleep(seconds * 1000);
+			ctx.rec.endRecord();
+			ctx.rec.save();
+			Thread.sleep(1000);
+		} finally {
+			ctx.out.close();
+			System.out.printf("Closed after %ds%n", seconds);
+		}
 	}
 
 	private void run() throws InterruptedException {
@@ -90,7 +101,8 @@ public class DefaultInstrument {
 		Minim minim = new Minim(serviceProvider);
 		System.out.println("Created minim: " + minim);
 		AudioOutput out = minim.getLineOut();
-		Ctx ctx = new Ctx(out, ran);
+		AudioRecorder rec = minim.createRecorder(out, fileName);
+		Ctx ctx = new Ctx(out, ran, rec);
 		run(ctx);
 	}
 
@@ -105,11 +117,13 @@ public class DefaultInstrument {
 	private static class Ctx {
 		private AudioOutput out;
 		private Random ran;
+		private AudioRecorder rec;
 
-		public Ctx(AudioOutput out, Random ran) {
+		public Ctx(AudioOutput out, Random ran, AudioRecorder rec) {
 			super();
 			this.out = out;
 			this.ran = ran;
+			this.rec = rec;
 		}
 	}
 
