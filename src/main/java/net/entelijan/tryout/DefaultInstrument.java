@@ -11,7 +11,7 @@ import net.entelijan.tryout.common.FileLoader;
 
 public class DefaultInstrument {
 	
-	private final String fileName = "minim.wav";
+	private final String fileName = "minim_definst.wav";
 
 	private void run(Ctx ctx) throws InterruptedException {
 

@@ -22,7 +22,9 @@ public class FileLoader {
 
 	private File getCreateFile(String fileName) {
 		File home = new File(System.getProperty("user.home"));
-		File file = new File(home, fileName);
+		File outDir = new File(home, "minim_out");
+		outDir.mkdirs();
+		File file = new File(outDir, fileName);
 		return file;
 	}
 
