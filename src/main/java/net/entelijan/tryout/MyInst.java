@@ -9,6 +9,7 @@ import ddf.minim.AudioRecorder;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
+import ddf.minim.ugens.ADSR;
 import ddf.minim.ugens.Damp;
 import ddf.minim.ugens.Instrument;
 import ddf.minim.ugens.Oscil;
@@ -16,10 +17,14 @@ import ddf.minim.ugens.Waves;
 
 public class MyInst {
 
+	private enum Inst {
+		A, B;
+	}
+
 	private final String fileName = "myinst_03.wav";
 	private final boolean recording = false;
 
-	private static class Inst implements Instrument {
+	private static class InstA implements Instrument {
 
 		private AudioOutput out;
 		private double freq;
@@ -28,7 +33,7 @@ public class MyInst {
 
 		private Damp damp;
 
-		public Inst(AudioOutput out, double freq) {
+		public InstA(AudioOutput out, double freq) {
 			super();
 			this.out = out;
 			this.freq = freq;
@@ -52,48 +57,90 @@ public class MyInst {
 
 	}
 
+	private static class InstB implements Instrument {
+
+		private AudioOutput out;
+		private double freq;
+
+		private Oscil toneOsc;
+
+		private ADSR adsr;
+
+		public InstB(AudioOutput out, double freq) {
+			super();
+			this.out = out;
+			this.freq = freq;
+			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.TRIANGLE);
+			adsr = new ADSR(2f, 0.01f, 0.7f, 0.1f, 1f);
+
+			toneOsc.patch(adsr);
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
+	}
+
 	private void run(Ctx ctx) throws InterruptedException {
 
 		ctx.out.setTempo(100);
 		ctx.out.pauseNotes();
 
-		for (int i = 0; i < 30; i += 3) {
+		for (int i = 0; i < 10; i += 4) {
 			double baseDur = 0.5;
 			double baseDiff = 1.0;
 			double speedFac = 0.6;
-			
+
 			double freq = 444;
 			double freqFac = 0.8;
-			
-			
-			playNote(i + 0, baseDur * r(4, ctx.ran), freq, ctx);
+
+			playNote(i + 0, baseDur * r(4, ctx.ran), freq, Inst.A, ctx);
 			double diff = baseDiff;
 			freq = freq * freqFac;
-			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, Inst.A, ctx);
 			diff = baseDiff + diff * speedFac;
 			freq = freq * freqFac;
-			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, Inst.A, ctx);
 			diff = baseDiff + diff * speedFac;
 			freq = freq * freqFac;
-			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, Inst.B, ctx);
 			diff = baseDiff + diff * speedFac;
 			freq = freq * freqFac;
-			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, Inst.B, ctx);
 			diff = baseDiff + diff * speedFac;
 			freq = freq * freqFac;
-			playNote(i + diff, baseDur * r(4, ctx.ran), freq, ctx);
+			playNote(i + diff, baseDur * r(4, ctx.ran), freq, Inst.B, ctx);
 		}
 
 		if (recording) {
 			ctx.rec.beginRecord();
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(20, ctx);
+		waitAndClose(10, ctx);
 	}
 
-	private void playNote(double time, double dur, double fbase, Ctx ctx) {
+	private void playNote(double time, double dur, double fbase, Inst inst, Ctx ctx) {
 		double f = fbase * r(1.1, ctx.ran);
-		Instrument i = new Inst(ctx.out, f);
+		Instrument i = new InstA(ctx.out, f);
+		switch (inst) {
+		case A:
+			i = new InstA(ctx.out, f);
+			break;
+		case B:
+			i = new InstB(ctx.out, f);
+			break;
+		default:
+			throw new IllegalStateException("Unknown inst value " + inst);
+		}
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
