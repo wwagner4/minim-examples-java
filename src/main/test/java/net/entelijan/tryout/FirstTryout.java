@@ -6,6 +6,7 @@ import ddf.minim.AudioOutput;
 import ddf.minim.Minim;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
+import net.entelijan.util.FileLoader;
 
 public class FirstTryout {
 

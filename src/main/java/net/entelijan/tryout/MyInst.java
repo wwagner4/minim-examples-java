@@ -1,22 +1,16 @@
 package net.entelijan.tryout;
 
-import static net.entelijan.tryout.MinimUtil.f;
+import static net.entelijan.util.MinimUtil.*;
 
 import java.util.Random;
 
-import ddf.minim.AudioOutput;
-import ddf.minim.AudioRecorder;
-import ddf.minim.Minim;
+import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
-import ddf.minim.ugens.ADSR;
-import ddf.minim.ugens.Instrument;
-import ddf.minim.ugens.MoogFilter;
+import ddf.minim.ugens.*;
 import ddf.minim.ugens.MoogFilter.Type;
-import ddf.minim.ugens.Noise;
 import ddf.minim.ugens.Noise.Tint;
-import ddf.minim.ugens.Oscil;
-import ddf.minim.ugens.Waves;
+import net.entelijan.util.FileLoader;
 
 public class MyInst {
 

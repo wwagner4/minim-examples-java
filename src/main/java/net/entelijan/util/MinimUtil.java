@@ -1,4 +1,4 @@
-package net.entelijan.tryout;
+package net.entelijan.util;
 
 public class MinimUtil {
 

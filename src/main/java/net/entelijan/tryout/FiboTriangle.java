@@ -1,14 +1,13 @@
 package net.entelijan.tryout;
 
+import static net.entelijan.util.MinimUtil.*;
+
 import java.util.Random;
 
-import ddf.minim.AudioOutput;
-import ddf.minim.AudioRecorder;
-import ddf.minim.Minim;
+import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
-
-import static net.entelijan.tryout.MinimUtil.*;
+import net.entelijan.util.FileLoader;
 
 public class FiboTriangle {
 	

@@ -1,6 +1,6 @@
 package net.entelijan.tryout;
 
-import static net.entelijan.tryout.MinimUtil.*;
+import static net.entelijan.util.MinimUtil.*;
 
 import java.util.Random;
 
@@ -8,6 +8,7 @@ import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
+import net.entelijan.util.FileLoader;
 
 public class Vibrato {
 
