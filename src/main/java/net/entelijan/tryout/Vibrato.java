@@ -29,10 +29,10 @@ public class Vibrato {
 			this.out = out;
 			this.freq = freq;
 			
-			lfo = new Oscil(10, 0.5f, Waves.SINE);
+			lfo = new Oscil(50, 1.7f, Waves.TRIANGLE);
 			
 			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.SINE);
-			adsr = new ADSR(1f, 0.001f, 0.5f, 0.3f, 1f);
+			adsr = new ADSR(1f, 0.001f, 0.5f, 0.1f, 0.5f);
 
 			lfo.patch(toneOsc.offset);
 			
@@ -55,12 +55,12 @@ public class Vibrato {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(100);
+		ctx.out.setTempo(50);
 		ctx.out.pauseNotes();
 
 		for (int i = 0; i < 10; i += 1) {
 			double baseDur = 0.5;
-			double freq = 180;
+			double freq = 200 + i * 50;
 			playNote(i + 0, baseDur * r(4, ctx.ran), freq, ctx);
 		}
 
@@ -71,9 +71,8 @@ public class Vibrato {
 		waitAndClose(10, ctx);
 	}
 
-	private void playNote(double time, double dur, double fbase, Ctx ctx) {
-		double f = fbase * r(1.4, ctx.ran);
-		Instrument i = new InstA(ctx.out, f);
+	private void playNote(double time, double dur, double freq, Ctx ctx) {
+		Instrument i = new InstA(ctx.out, f(freq));
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
