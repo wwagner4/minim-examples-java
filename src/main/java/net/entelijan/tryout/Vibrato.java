@@ -14,43 +14,31 @@ public class Vibrato {
 
 	private final String fileName = "vibrato_00.wav";
 	private final boolean recording = false;
-
-	private static class InstA implements Instrument {
-
-		private AudioOutput out;
-
-		private Oscil toneOsc;
-		private Oscil lfo;
-
-		private ADSR adsr;
-		private Constant cons;
-
-		public InstA(AudioOutput out, double freq) {
-			super();
-			this.out = out;
-			
-			cons = new Constant(f(freq));
-			lfo = new Oscil(6, 6f, Waves.SINE);
-			toneOsc = new Oscil(0, 0.2f, Waves.TRIANGLE);
-			adsr = new ADSR(5f, 0.01f, 0.1f, 0.15f, 1.5f);
-
-			cons.patch(lfo.offset);
-			lfo.patch(toneOsc.frequency);
-			toneOsc.patch(adsr);
+	
+	public static void main(String[] args) {
+		try {
+			new Vibrato().run();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+	}
+	
+	private void run() throws InterruptedException {
+		Random ran = new Random();
 
-		@Override
-		public void noteOn(float duration) {
-			adsr.noteOn();
-			adsr.patch(out);
+		FileLoader fileLoader = new FileLoader();
+		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
+		Minim minim = new Minim(serviceProvider);
+		AudioOutput out = minim.getLineOut();
+
+		AudioRecorder rec = null;
+		if (recording) {
+			rec = minim.createRecorder(out, fileName);
 		}
-
-		@Override
-		public void noteOff() {
-			adsr.unpatchAfterRelease(out);
-			adsr.noteOff();
-		}
-
+		
+		Ctx ctx = new Ctx(out, ran, rec);
+		
+		run(ctx);
 	}
 
 	private void run(Ctx ctx) throws InterruptedException {
@@ -94,28 +82,42 @@ public class Vibrato {
 		}
 	}
 
-	private void run() throws InterruptedException {
-		Random ran = new Random();
-		FileLoader fileLoader = new FileLoader();
-		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
-		Minim minim = new Minim(serviceProvider);
-		System.out.println("Created minim: " + minim);
-		AudioOutput out = minim.getLineOut();
+	private static class InstA implements Instrument {
 
-		AudioRecorder rec = null;
-		if (recording) {
-			rec = minim.createRecorder(out, fileName);
-		}
-		Ctx ctx = new Ctx(out, ran, rec);
-		run(ctx);
-	}
+		private AudioOutput out;
 
-	public static void main(String[] args) {
-		try {
-			new Vibrato().run();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		private Oscil toneOsc;
+		private Oscil lfo;
+
+		private ADSR adsr;
+		private Constant cons;
+
+		public InstA(AudioOutput out, double freq) {
+			super();
+			this.out = out;
+			
+			cons = new Constant(f(freq));
+			lfo = new Oscil(6, 6f, Waves.SINE);
+			toneOsc = new Oscil(0, 0.2f, Waves.TRIANGLE);
+			adsr = new ADSR(5f, 0.01f, 0.1f, 0.15f, 1.5f);
+
+			cons.patch(lfo.offset);
+			lfo.patch(toneOsc.frequency);
+			toneOsc.patch(adsr);
 		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
 	}
 
 	private static class Ctx {
