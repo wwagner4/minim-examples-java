@@ -12,14 +12,17 @@ import static net.entelijan.tryout.MinimUtil.*;
 
 public class FiboTriangle {
 	
-	private final String fileName = "fibo_triangle_01.wav";
+	private final String fileName = "fibo_triangle_00.wav";
+	private boolean record = false;
 
 	private void run(Ctx ctx) throws InterruptedException {
 
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
 		seqE(ctx);
-		ctx.rec.beginRecord();
+		if (record) {
+			ctx.rec.beginRecord();
+		}
 		ctx.out.resumeNotes();
 		waitAndClose(60, ctx);
 	}
@@ -82,7 +85,9 @@ public class FiboTriangle {
 	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
 		try {
 			Thread.sleep(seconds * 1000);
-			ctx.rec.save();
+			if (record) {
+				ctx.rec.save();
+			}
 		} finally {
 			ctx.out.close();
 			System.out.printf("Closed after %ds%n", seconds);
