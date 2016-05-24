@@ -24,7 +24,7 @@ public class MyInst {
 		A, B;
 	}
 
-	private final String fileName = "myinst_08.wav";
+	private final String fileName = "myinst_00.wav";
 	private final boolean recording = false;
 
 	private static class InstB implements Instrument {
