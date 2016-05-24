@@ -11,31 +11,30 @@ import ddf.minim.ugens.*;
 
 public class Vibrato {
 
-	private final String fileName = "vibrato_01.wav";
+	private final String fileName = "vibrato_00.wav";
 	private final boolean recording = false;
 
 	private static class InstA implements Instrument {
 
 		private AudioOutput out;
-		private double freq;
 
 		private Oscil toneOsc;
 		private Oscil lfo;
 
 		private ADSR adsr;
+		private Constant cons;
 
 		public InstA(AudioOutput out, double freq) {
 			super();
 			this.out = out;
-			this.freq = freq;
 			
-			lfo = new Oscil(50, 1.7f, Waves.TRIANGLE);
-			
-			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.SINE);
-			adsr = new ADSR(1f, 0.001f, 0.5f, 0.1f, 0.5f);
+			cons = new Constant(f(freq));
+			lfo = new Oscil(6, 6f, Waves.SINE);
+			toneOsc = new Oscil(0, 0.2f, Waves.TRIANGLE);
+			adsr = new ADSR(5f, 0.01f, 0.1f, 0.15f, 1.5f);
 
-			lfo.patch(toneOsc.offset);
-			
+			cons.patch(lfo.offset);
+			lfo.patch(toneOsc.frequency);
 			toneOsc.patch(adsr);
 		}
 
@@ -58,10 +57,11 @@ public class Vibrato {
 		ctx.out.setTempo(50);
 		ctx.out.pauseNotes();
 
-		for (int i = 0; i < 10; i += 1) {
-			double baseDur = 0.5;
-			double freq = 200 + i * 50;
-			playNote(i + 0, baseDur * r(4, ctx.ran), freq, ctx);
+		double freq = 150;
+		for (int i = 0; i < 6; i += 1) {
+			double baseDur = 1;
+			playNote(i * 0.7 + 0, baseDur * r(4, ctx.ran), freq, ctx);
+			freq = freq * 1.2 * r(1.5, ctx.ran);
 		}
 
 		if (recording) {
