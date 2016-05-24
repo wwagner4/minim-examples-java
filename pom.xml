@@ -4,6 +4,7 @@
 	<groupId>net.entelijan</groupId>
 	<artifactId>minim-examples-java</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
 	<name>minim-examples-java</name>
 
 	<dependencies>
@@ -14,6 +15,7 @@
 			<type>jar</type>
 		</dependency>
 	</dependencies>
+	
 	<repositories>
 		<repository>
 			<snapshots>
@@ -24,6 +26,7 @@
 			<url>http://dl.bintray.com/wwagner4/maven</url>
 		</repository>
 	</repositories>
+	
 	<build>
 		<plugins>
 			<plugin>
