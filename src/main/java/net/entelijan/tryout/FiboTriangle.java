@@ -13,9 +13,30 @@ public class FiboTriangle {
 	
 	private final String fileName = "fibo_triangle_00.wav";
 	private boolean record = false;
+	
+	public static void main(String[] args) {
+		try {
+			new FiboTriangle().run();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void run() throws InterruptedException {
+		Random ran = new Random();
+		FileLoader fileLoader = new FileLoader();
+		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
+		Minim minim = new Minim(serviceProvider);
+		System.out.println("Created minim: " + minim);
+		AudioOutput out = minim.getLineOut();
+		AudioRecorder rec = minim.createRecorder(out, fileName);
+		Ctx ctx = new Ctx(out, ran, rec);
+		run(ctx);
+	}
+
+
 
 	private void run(Ctx ctx) throws InterruptedException {
-
 		ctx.out.setTempo(80);
 		ctx.out.pauseNotes();
 		seqE(ctx);
@@ -90,26 +111,6 @@ public class FiboTriangle {
 		} finally {
 			ctx.out.close();
 			System.out.printf("Closed after %ds%n", seconds);
-		}
-	}
-
-	private void run() throws InterruptedException {
-		Random ran = new Random();
-		FileLoader fileLoader = new FileLoader();
-		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
-		Minim minim = new Minim(serviceProvider);
-		System.out.println("Created minim: " + minim);
-		AudioOutput out = minim.getLineOut();
-		AudioRecorder rec = minim.createRecorder(out, fileName);
-		Ctx ctx = new Ctx(out, ran, rec);
-		run(ctx);
-	}
-
-	public static void main(String[] args) {
-		try {
-			new FiboTriangle().run();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 
