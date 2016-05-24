@@ -20,72 +20,32 @@ public class MyInst {
 
 	private final String fileName = "myinst_00.wav";
 	private final boolean recording = false;
-
-	private static class InstB implements Instrument {
-
-		private AudioOutput out;
-		private double freq;
-
-		private Oscil toneOsc;
-
-		private ADSR adsr;
-
-		public InstB(AudioOutput out, double freq) {
-			super();
-			this.out = out;
-			this.freq = freq;
-			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.TRIANGLE);
-			adsr = new ADSR(1f, 0.001f, 0.1f, 0.03f, 1f);
-
-			toneOsc.patch(adsr);
+	
+	public static void main(String[] args) {
+		try {
+			new MyInst().run();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
-
-		@Override
-		public void noteOn(float duration) {
-			adsr.noteOn();
-			adsr.patch(out);
-		}
-
-		@Override
-		public void noteOff() {
-			adsr.unpatchAfterRelease(out);
-			adsr.noteOff();
-		}
-
 	}
 
-	private static class InstA implements Instrument {
-
-		private AudioOutput out;
-
-		private Noise noise;
-
-		private ADSR adsr;
-
-		private MoogFilter moog;
-
-		public InstA(AudioOutput out, double freq) {
-			super();
-			this.out = out;
-			noise = new Noise(Tint.PINK);
-			adsr = new ADSR(3f, 0.005f, 0.08f, 0.1f, 0.3f);
-			moog = new MoogFilter(f(freq), 0.5f, Type.BP);
-
-			noise.patch(moog).patch(adsr);
+	private void run() throws InterruptedException {
+		
+		Random ran = new Random();
+		
+		FileLoader fileLoader = new FileLoader();
+		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
+		Minim minim = new Minim(serviceProvider);
+		AudioOutput out = minim.getLineOut();
+		
+		AudioRecorder rec = null;
+		if (recording) {
+			rec = minim.createRecorder(out, fileName);
 		}
 
-		@Override
-		public void noteOn(float duration) {
-			adsr.noteOn();
-			adsr.patch(out);
-		}
-
-		@Override
-		public void noteOff() {
-			adsr.unpatchAfterRelease(out);
-			adsr.noteOff();
-		}
-
+		Ctx ctx = new Ctx(out, ran, rec);
+		
+		run(ctx);
 	}
 
 	private void run(Ctx ctx) throws InterruptedException {
@@ -176,29 +136,72 @@ public class MyInst {
 			System.out.printf("Closed after %ds%n", seconds);
 		}
 	}
+	
+	private static class InstB implements Instrument {
 
-	private void run() throws InterruptedException {
-		Random ran = new Random();
-		FileLoader fileLoader = new FileLoader();
-		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
-		Minim minim = new Minim(serviceProvider);
-		System.out.println("Created minim: " + minim);
-		AudioOutput out = minim.getLineOut();
+		private AudioOutput out;
+		private double freq;
 
-		AudioRecorder rec = null;
-		if (recording) {
-			rec = minim.createRecorder(out, fileName);
+		private Oscil toneOsc;
+
+		private ADSR adsr;
+
+		public InstB(AudioOutput out, double freq) {
+			super();
+			this.out = out;
+			this.freq = freq;
+			toneOsc = new Oscil(f(this.freq), 0.2f, Waves.TRIANGLE);
+			adsr = new ADSR(1f, 0.001f, 0.1f, 0.03f, 1f);
+
+			toneOsc.patch(adsr);
 		}
-		Ctx ctx = new Ctx(out, ran, rec);
-		run(ctx);
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
 	}
 
-	public static void main(String[] args) {
-		try {
-			new MyInst().run();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	private static class InstA implements Instrument {
+
+		private AudioOutput out;
+
+		private Noise noise;
+
+		private ADSR adsr;
+
+		private MoogFilter moog;
+
+		public InstA(AudioOutput out, double freq) {
+			super();
+			this.out = out;
+			noise = new Noise(Tint.PINK);
+			adsr = new ADSR(3f, 0.005f, 0.08f, 0.1f, 0.3f);
+			moog = new MoogFilter(f(freq), 0.5f, Type.BP);
+
+			noise.patch(moog).patch(adsr);
 		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
 	}
 
 	private static class Ctx {
