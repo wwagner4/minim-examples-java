@@ -47,12 +47,12 @@ public class DrumMachine {
 		ctx.out.pauseNotes();
 
 		int t = 0;
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 1, 0, ctx);
+		play(t++, 0, 0, 1, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 1, ctx);
 		
 
 		if (recording) {
@@ -62,12 +62,15 @@ public class DrumMachine {
 		waitAndClose(10, ctx);
 	}
 
-	private void play(int time, int bd, int d1, Ctx ctx) {
+	private void play(int time, int bd, int d1, int d2, Ctx ctx) {
 		if (is(bd)) {
 			playBD(time, 1, ctx);
 		}
 		if (is(d1)) {
 			playD1(time, 1, 1700, ctx);
+		}
+		if (is(d2)) {
+			playD2(time, 1, 1700, ctx);
 		}
 	}
 
@@ -77,6 +80,11 @@ public class DrumMachine {
 	}
 
 	private void playD1(double time, double dur, double freq, Ctx ctx) {
+		Instrument i = new D1(ctx, freq * r(1.1, ctx.ran));
+		ctx.out.playNote(f(time), f(dur), i);
+	}
+
+	private void playD2(double time, double dur, double freq, Ctx ctx) {
 		Instrument i = new D1(ctx, freq * r(1.1, ctx.ran));
 		ctx.out.playNote(f(time), f(dur), i);
 	}
