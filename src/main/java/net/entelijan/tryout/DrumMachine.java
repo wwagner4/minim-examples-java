@@ -45,15 +45,28 @@ public class DrumMachine {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(60);
+		ctx.out.setTempo(370);
 		ctx.out.pauseNotes();
 
-		double freq = 1000;
-		for (int i = 0; i < 6; i += 1) {
-			double baseDur = 0.3;
-			playNote(i * 0.7 + 0, baseDur, freq * r(1.5, ctx.ran), ctx);
-			freq = freq * 1.2 * r(1.5, ctx.ran);
-		}
+		int t = 0;
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 1, 0, ctx);
+		play(t++, 0, 1, ctx);
+		play(t++, 0, 0, ctx);
+		play(t++, 0, 1, ctx);
+		
 
 		if (recording) {
 			ctx.rec.beginRecord();
@@ -62,8 +75,27 @@ public class DrumMachine {
 		waitAndClose(10, ctx);
 	}
 
-	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new B1(ctx, freq);
+	private void play(int time, int bd, int d1, Ctx ctx) {
+		if (is(bd)) {
+			playBD(time, 1, ctx);
+		}
+		if (is(d1)) {
+			playD1(time, 1, 1700, ctx);
+		}
+	}
+
+	private boolean is(int zeroOrOne) {
+		if (zeroOrOne == 0) return false;
+		else return true;
+	}
+
+	private void playD1(double time, double dur, double freq, Ctx ctx) {
+		Instrument i = new D1(ctx, freq * r(1.1, ctx.ran));
+		ctx.out.playNote(f(time), f(dur), i);
+	}
+
+	private void playBD(double time, double dur, Ctx ctx) {
+		Instrument i = new BD(ctx);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
@@ -103,8 +135,8 @@ public class DrumMachine {
 			lfo = new Oscil(10f, 0.4f, Waves.SINE);
 
 			noise = new Noise(Tint.WHITE);
-			moog = new MoogFilter(300f, 0.0f, Type.LP);
-			adsr = new ADSR(30f, 0.0001f, 0.2f, 0.05f, 1.0f);
+			moog = new MoogFilter(700f, 0.0f, Type.LP);
+			adsr = new ADSR(15f, 0.0001f, 0.2f, 0.05f, 1.0f);
 
 			cons.patch(lfo.offset);
 			lfo.patch(noise.amplitude);
@@ -126,7 +158,7 @@ public class DrumMachine {
 
 	}
 
-	private class B1 implements Instrument {
+	private class D1 implements Instrument {
 
 		private AudioOutput out;
 
@@ -137,16 +169,16 @@ public class DrumMachine {
 		private ADSR adsr;
 		private Constant cons;
 
-		public B1(Ctx ctx, double freq) {
+		public D1(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
 
 			cons = new Constant(1.0f);
-			lfo = new Oscil(6f, 0.7f, Waves.SQUARE);
+			lfo = new Oscil(6f, 0.9f, Waves.SQUARE);
 
 			noise = new Noise(Tint.WHITE);
 			moog = new MoogFilter(f(freq), 0.9f, Type.BP);
-			adsr = new ADSR(1f, 0.002f, 0.3f, 0.03f, 0.2f);
+			adsr = new ADSR(1f, 0.002f, 0.2f, 0.03f, 0.2f);
 
 			cons.patch(lfo.offset);
 			lfo.patch(noise.amplitude);
