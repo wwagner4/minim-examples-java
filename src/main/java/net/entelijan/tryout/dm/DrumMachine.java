@@ -13,7 +13,7 @@ import net.entelijan.util.FileLoader;
 public class DrumMachine {
 
 	private final String fileName = "dm_05.wav";
-	private final boolean recording = true;
+	private final boolean recording = false;
 
 	public static void main(String[] args) {
 		try {
