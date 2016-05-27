@@ -43,27 +43,16 @@ public class DrumMachine {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(370);
+		ctx.out.setTempo(70);
 		ctx.out.pauseNotes();
 
 		int t = 0;
 		play(t++, 0, 1, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
 		play(t++, 0, 0, ctx);
 		play(t++, 0, 1, ctx);
 		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
 		play(t++, 0, 1, ctx);
 		play(t++, 1, 0, ctx);
-		play(t++, 0, 1, ctx);
-		play(t++, 0, 0, ctx);
-		play(t++, 0, 1, ctx);
 		
 
 		if (recording) {

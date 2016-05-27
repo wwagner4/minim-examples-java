@@ -22,11 +22,11 @@ class BD implements Instrument {
 		this.out = ctx.out;
 
 		cons = new Constant(1.0f);
-		lfo = new Oscil(10f, 0.4f, Waves.SINE);
+		lfo = new Oscil(10f, 0.6f, Waves.SINE);
 
-		noise = new Noise(Tint.WHITE);
-		moog = new MoogFilter(700f, 0.0f, Type.LP);
-		adsr = new ADSR(15f, 0.0001f, 0.2f, 0.05f, 1.0f);
+		noise = new Noise(Tint.BROWN);
+		moog = new MoogFilter(600f, 0.0f, Type.BP);
+		adsr = new ADSR(10f, 0.01f, 0.1f, 0.1f, 0.4f);
 
 		cons.patch(lfo.offset);
 		lfo.patch(noise.amplitude);
