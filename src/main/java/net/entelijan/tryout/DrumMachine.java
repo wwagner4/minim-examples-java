@@ -45,13 +45,13 @@ public class DrumMachine {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(100);
+		ctx.out.setTempo(60);
 		ctx.out.pauseNotes();
 
-		double freq = 150;
+		double freq = 1000;
 		for (int i = 0; i < 6; i += 1) {
 			double baseDur = 0.3;
-			playNote(i * 0.7 + 0, baseDur, freq, ctx);
+			playNote(i * 0.7 + 0, baseDur, freq * r(1.5, ctx.ran), ctx);
 			freq = freq * 1.2 * r(1.5, ctx.ran);
 		}
 
@@ -63,7 +63,7 @@ public class DrumMachine {
 	}
 
 	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new BD(ctx);
+		Instrument i = new B1(ctx, freq);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
@@ -105,6 +105,48 @@ public class DrumMachine {
 			noise = new Noise(Tint.WHITE);
 			moog = new MoogFilter(300f, 0.0f, Type.LP);
 			adsr = new ADSR(30f, 0.0001f, 0.2f, 0.05f, 1.0f);
+
+			cons.patch(lfo.offset);
+			lfo.patch(noise.amplitude);
+			noise.patch(moog).patch(adsr);
+			;
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
+	}
+
+	private class B1 implements Instrument {
+
+		private AudioOutput out;
+
+		private Noise noise;
+		private Oscil lfo;
+		private MoogFilter moog;
+
+		private ADSR adsr;
+		private Constant cons;
+
+		public B1(Ctx ctx, double freq) {
+			super();
+			this.out = ctx.out;
+
+			cons = new Constant(1.0f);
+			lfo = new Oscil(6f, 0.7f, Waves.SQUARE);
+
+			noise = new Noise(Tint.WHITE);
+			moog = new MoogFilter(f(freq), 0.9f, Type.BP);
+			adsr = new ADSR(1f, 0.002f, 0.3f, 0.03f, 0.2f);
 
 			cons.patch(lfo.offset);
 			lfo.patch(noise.amplitude);
