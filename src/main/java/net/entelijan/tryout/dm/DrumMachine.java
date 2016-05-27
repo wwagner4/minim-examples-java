@@ -12,8 +12,8 @@ import net.entelijan.util.FileLoader;
 
 public class DrumMachine {
 
-	private final String fileName = "dm_00.wav";
-	private final boolean recording = false;
+	private final String fileName = "dm_05.wav";
+	private final boolean recording = true;
 
 	public static void main(String[] args) {
 		try {
@@ -47,50 +47,70 @@ public class DrumMachine {
 
 		ctx.out.setTempo(220);
 		int t = 0;
-		for (int j = 0; j < 2; j++) {
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		for (int j = 0; j < 4; j++) {
 			for (int i = 0; i < 2; i++) {
-				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 1, ctx);
 				play(t++, 0, 0, 0, ctx);
-				play(t++, 0, 0, 1, ctx);
-				play(t++, 1, 0, 0, ctx);
-				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 1, ctx);
+				play(t++, 0, 0, 0, ctx);
 				play(t++, 1, 0, 1, ctx);
 				play(t++, 0, 0, 1, ctx);
-				play(t++, 0, 1, 0, ctx);
+				play(t++, 1, 0, 1, ctx);
+				play(t++, 1, 1, 0, ctx);
 			}
 			for (int i = 0; i < 1; i++) {
-				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 1, ctx);
 				play(t++, 0, 0, 0, ctx);
-				play(t++, 0, 0, 1, ctx);
-				play(t++, 1, 0, 0, ctx);
-				play(t++, 0, 0, 1, ctx);
-				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 1, ctx);
+				play(t++, 0, 1, 0, ctx);
 				play(t++, 0, 0, 1, ctx);
 				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 1, 1, ctx);
 			}
 		}
 		play(t++, 0, 0, 1, ctx);
+		play(t++, 0, 0, 0, ctx);
 		play(t++, 0, 0, 1, ctx);
 		play(t++, 0, 0, 0, ctx);
-		play(t++, 0, 1, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 0, 0, 0, ctx);
+		play(t++, 1, 1, 1, ctx);
+		play(t++, 1, 1, 1, ctx);
 		
 		if (recording) {
 			ctx.rec.beginRecord();
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(22, ctx);
+		waitAndClose(50, ctx);
 	}
 
 	private void play(int time, int bd, int d1, int d2, Ctx ctx) {
-		double t = time + r(1.01, ctx.ran);
+		double t = time + r(1.02, ctx.ran);
 		if (is(bd)) {
-			playBD(t, 1, 200, ctx);
+			playBD(t, 0.5, 200, ctx);
 		}
 		if (is(d1)) {
 			playD1(t, 2, 700, ctx);
 		}
 		if (is(d2)) {
-			playD2(t, 0.8, 1000, ctx);
+			playD2(t, 0.8, 1200, ctx);
 		}
 	}
 

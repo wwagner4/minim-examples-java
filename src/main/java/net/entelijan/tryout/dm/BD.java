@@ -25,9 +25,9 @@ class BD implements Instrument {
 		cons = new Constant(1.0f);
 		lfo = new Oscil(10f, 0.6f, Waves.SINE);
 
-		noise = new Noise(Tint.PINK);
-		moog = new MoogFilter(f(freq), 0.8f, Type.BP);
-		adsr = new ADSR(3f, 0.01f, 0.1f, 0.1f, 0.5f);
+		noise = new Noise(Tint.BROWN);
+		moog = new MoogFilter(f(freq), 0.6f, Type.BP);
+		adsr = new ADSR(1f, 0.01f, 0.1f, 0.1f, 0.5f);
 
 		cons.patch(lfo.offset);
 		lfo.patch(noise.amplitude);
