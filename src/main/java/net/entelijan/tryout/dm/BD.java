@@ -1,4 +1,5 @@
 package net.entelijan.tryout.dm;
+import static net.entelijan.util.MinimUtil.*;
 
 import ddf.minim.AudioOutput;
 import ddf.minim.ugens.*;
@@ -17,16 +18,16 @@ class BD implements Instrument {
 	private ADSR adsr;
 	private Constant cons;
 
-	public BD(Ctx ctx) {
+	public BD(double freq, Ctx ctx) {
 		super();
 		this.out = ctx.out;
 
 		cons = new Constant(1.0f);
 		lfo = new Oscil(10f, 0.6f, Waves.SINE);
 
-		noise = new Noise(Tint.BROWN);
-		moog = new MoogFilter(600f, 0.0f, Type.BP);
-		adsr = new ADSR(10f, 0.01f, 0.1f, 0.1f, 0.4f);
+		noise = new Noise(Tint.PINK);
+		moog = new MoogFilter(f(freq), 0.8f, Type.BP);
+		adsr = new ADSR(3f, 0.01f, 0.1f, 0.1f, 0.5f);
 
 		cons.patch(lfo.offset);
 		lfo.patch(noise.amplitude);

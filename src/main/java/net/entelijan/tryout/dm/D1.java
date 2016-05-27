@@ -24,11 +24,11 @@ class D1 implements Instrument {
 		this.out = ctx.out;
 
 		cons = new Constant(1.0f);
-		lfo = new Oscil(6f, 0.9f, Waves.SQUARE);
+		lfo = new Oscil(15f, 0.3f, Waves.SQUARE);
 
 		noise = new Noise(Tint.RED);
-		moog = new MoogFilter(f(freq), 0.8f, Type.BP);
-		adsr = new ADSR(1f, 0.002f, 0.2f, 0.1f, 0.5f);
+		moog = new MoogFilter(f(freq), 0.9f, Type.BP);
+		adsr = new ADSR(0.5f, 0.002f, 0.4f, 0.01f, 0.6f);
 
 		cons.patch(lfo.offset);
 		lfo.patch(noise.amplitude);

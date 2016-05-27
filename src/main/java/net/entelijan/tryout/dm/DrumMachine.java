@@ -12,7 +12,7 @@ import net.entelijan.util.FileLoader;
 
 public class DrumMachine {
 
-	private final String fileName = "tremolo_00.wav";
+	private final String fileName = "dm_00.wav";
 	private final boolean recording = false;
 
 	public static void main(String[] args) {
@@ -43,54 +43,76 @@ public class DrumMachine {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(70);
 		ctx.out.pauseNotes();
 
+		ctx.out.setTempo(220);
 		int t = 0;
+		for (int j = 0; j < 2; j++) {
+			for (int i = 0; i < 2; i++) {
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 0, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 0, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 1, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 1, 0, ctx);
+			}
+			for (int i = 0; i < 1; i++) {
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 0, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 1, 0, 0, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 1, ctx);
+				play(t++, 0, 0, 1, ctx);
+			}
+		}
+		play(t++, 0, 0, 1, ctx);
 		play(t++, 0, 0, 1, ctx);
 		play(t++, 0, 0, 0, ctx);
-		play(t++, 0, 0, 0, ctx);
-		play(t++, 0, 0, 0, ctx);
-		play(t++, 0, 0, 0, ctx);
-		play(t++, 0, 0, 1, ctx);
+		play(t++, 0, 1, 0, ctx);
 		
-
 		if (recording) {
 			ctx.rec.beginRecord();
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(10, ctx);
+		waitAndClose(22, ctx);
 	}
 
 	private void play(int time, int bd, int d1, int d2, Ctx ctx) {
+		double t = time + r(1.01, ctx.ran);
 		if (is(bd)) {
-			playBD(time, 1, ctx);
+			playBD(t, 1, 200, ctx);
 		}
 		if (is(d1)) {
-			playD1(time, 1, 1700, ctx);
+			playD1(t, 2, 700, ctx);
 		}
 		if (is(d2)) {
-			playD2(time, 1, 1700, ctx);
+			playD2(t, 0.8, 1000, ctx);
 		}
 	}
 
 	private boolean is(int zeroOrOne) {
-		if (zeroOrOne == 0) return false;
-		else return true;
+		if (zeroOrOne == 0)
+			return false;
+		else
+			return true;
 	}
 
 	private void playD1(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new D1(ctx, freq * r(1.1, ctx.ran));
+		Instrument i = new D1(ctx, freq);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
 	private void playD2(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new D1(ctx, freq * r(1.1, ctx.ran));
+		Instrument i = new D2(ctx, freq);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
-	private void playBD(double time, double dur, Ctx ctx) {
-		Instrument i = new BD(ctx);
+	private void playBD(double time, double dur, double freq, Ctx ctx) {
+		Instrument i = new BD(freq, ctx);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
