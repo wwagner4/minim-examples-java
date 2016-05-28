@@ -14,7 +14,7 @@ public class IIRFilter {
 
 	private final String fileName = "iirfilter_00.wav";
 	private final boolean recording = false;
-	
+
 	public static void main(String[] args) {
 		try {
 			new IIRFilter().run();
@@ -22,7 +22,7 @@ public class IIRFilter {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void run() throws InterruptedException {
 
 		FileLoader fileLoader = new FileLoader();
@@ -34,9 +34,9 @@ public class IIRFilter {
 		if (recording) {
 			rec = minim.createRecorder(out, fileName);
 		}
-		
+
 		Ctx ctx = new Ctx(out, rec);
-		
+
 		run(ctx);
 	}
 
@@ -45,25 +45,39 @@ public class IIRFilter {
 		ctx.out.setTempo(50);
 		ctx.out.pauseNotes();
 
-		double freq = 150;
+		double baseFreq = 400;
 		double dur = 0.7;
 		int time = 0;
-		for (int i = 0; i < 4; i += 1) {
-			Instrument inst = new InstPlain(ctx, f(freq));
-			//playNote(time++, dur, inst, ctx);
-			freq = freq * 1.2;
+		{
+			double freq = baseFreq;
+			for (int i = 0; i < 4; i += 1) {
+				Instrument inst = new InstPlain(ctx, f(freq));
+				playNote(time++, dur, inst, ctx);
+				freq = freq * 1.2;
+			}
 		}
-		for (int i = 0; i < 10; i += 1) {
-			Instrument inst = new InstBpNoise(ctx, f(freq));
-			playNote(time++, dur, inst, ctx);
-			freq = freq * 1.2;
+		{
+			double freq = baseFreq;
+			for (int i = 0; i < 4; i += 1) {
+				Instrument inst = new InstBpSquare(ctx, f(freq));
+				playNote(time++, dur, inst, ctx);
+				freq = freq * 1.2;
+			}
+		}
+		{
+			double freq = baseFreq;
+			for (int i = 0; i < 4; i += 1) {
+				Instrument inst = new InstBpNoise(ctx, f(freq));
+				playNote(time++, dur, inst, ctx);
+				freq = freq * 1.2;
+			}
 		}
 
 		if (recording) {
 			ctx.rec.beginRecord();
 		}
 		ctx.out.resumeNotes();
-		waitAndClose(10, ctx);
+		waitAndClose(20, ctx);
 	}
 
 	private void playNote(double time, double dur, Instrument i, Ctx ctx) {
@@ -88,16 +102,16 @@ public class IIRFilter {
 		private AudioOutput out;
 
 		private Oscil toneOsc;
-		
+
 		private ADSR adsr;
 
 		public InstPlain(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
-						
+
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
-			
-			adsr = new ADSR(5f, 0.05f, 0.3f, 0.05f, 0.5f);
+
+			adsr = new ADSR(1f, 0.05f, 0.3f, 0.05f, 0.5f);
 
 			toneOsc.patch(adsr);
 		}
@@ -121,7 +135,7 @@ public class IIRFilter {
 		private AudioOutput out;
 
 		private Oscil toneOsc;
-		
+
 		private BandPass bp;
 
 		private ADSR adsr;
@@ -129,10 +143,10 @@ public class IIRFilter {
 		public InstBpSquare(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
-						
+
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
 			bp = new BandPass(600, 100, out.sampleRate());
-			
+
 			adsr = new ADSR(14f, 0.05f, 0.3f, 0.05f, 0.5f);
 
 			toneOsc.patch(bp).patch(adsr);
@@ -157,7 +171,7 @@ public class IIRFilter {
 		private AudioOutput out;
 
 		private Noise noise;
-		
+
 		private BandPass bp;
 
 		private ADSR adsr;
@@ -165,11 +179,11 @@ public class IIRFilter {
 		public InstBpNoise(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
-						
-			noise = new Noise(10, Tint.WHITE);
+
+			noise = new Noise(5, Tint.WHITE);
 			bp = new BandPass(f(freq), 1, out.sampleRate());
-			
-			adsr = new ADSR(50f, 0.05f, 0.3f, 0.05f, 0.5f);
+
+			adsr = new ADSR(15f, 0.05f, 0.6f, 0.05f, 0.5f);
 
 			noise.patch(bp).patch(adsr);
 		}
