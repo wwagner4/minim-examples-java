@@ -82,23 +82,16 @@ public class IIRFilter {
 		private AudioOutput out;
 
 		private Oscil toneOsc;
-		private Oscil lfo;
 
 		private ADSR adsr;
-		private Constant cons;
 
 		public Inst(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
-			
-			cons = new Constant(0.5f);
-			lfo = new Oscil(5f, 0.1f, Waves.SINE);
-			
+						
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
 			adsr = new ADSR(1f, 0.05f, 0.3f, 0.05f, 0.5f);
 
-			cons.patch(lfo.offset);
-			lfo.patch(toneOsc.amplitude);
 			toneOsc.patch(adsr);
 		}
 
