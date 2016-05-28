@@ -52,7 +52,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstPlain(ctx, f(freq));
-				playNote(time++, dur, inst, ctx);
+				//playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -60,7 +60,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstNotch(ctx, f(freq));
-				playNote(time++, dur, inst, ctx);
+				//playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -68,6 +68,14 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstBpNoise(ctx, f(freq));
+				//playNote(time++, dur, inst, ctx);
+				freq = freq * 1.2;
+			}
+		}
+		{
+			double freq = baseFreq;
+			for (int i = 0; i < 4; i += 1) {
+				Instrument inst = new InstCheb(ctx, f(freq));
 				playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
@@ -145,7 +153,7 @@ public class IIRFilterImpl {
 			this.out = ctx.out;
 
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
-			iir = new NotchFilter(f(freq) + 150, 100, out.sampleRate());
+			iir = new NotchFilter(f(freq) + 200, 10, out.sampleRate());
 
 			adsr = new ADSR(5f, 0.005f, 0.6f, 0.1f, 0.5f);
 
@@ -182,6 +190,42 @@ public class IIRFilterImpl {
 
 			noise = new Noise(5, Tint.WHITE);
 			iir = new BandPass(f(freq), 1, out.sampleRate());
+
+			adsr = new ADSR(15f, 0.05f, 0.6f, 0f, 0.5f);
+
+			noise.patch(iir).patch(adsr);
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
+	}
+
+	private class InstCheb implements Instrument {
+
+		private AudioOutput out;
+
+		private Noise noise;
+
+		private IIRFilter iir;
+
+		private ADSR adsr;
+
+		public InstCheb(Ctx ctx, double freq) {
+			super();
+			this.out = ctx.out;
+
+			noise = new Noise(5, Tint.WHITE);
+			iir = new ChebFilter(f(freq), ChebFilter.HP, 0.005f, 3, out.sampleRate());
 
 			adsr = new ADSR(15f, 0.05f, 0.6f, 0f, 0.5f);
 
