@@ -2,12 +2,12 @@ package net.entelijan.tryout;
 
 import static net.entelijan.util.MinimUtil.*;
 
-import java.util.Random;
-
 import ddf.minim.*;
+import ddf.minim.effects.BandPass;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
+import ddf.minim.ugens.Noise.Tint;
 import net.entelijan.util.FileLoader;
 
 public class IIRFilter {
@@ -46,9 +46,16 @@ public class IIRFilter {
 		ctx.out.pauseNotes();
 
 		double freq = 150;
-		for (int i = 0; i < 6; i += 1) {
-			double baseDur = 1;
-			playNote(i * 0.7 + 0, baseDur, freq, ctx);
+		double dur = 0.7;
+		int time = 0;
+		for (int i = 0; i < 4; i += 1) {
+			Instrument inst = new InstPlain(ctx, f(freq));
+			//playNote(time++, dur, inst, ctx);
+			freq = freq * 1.2;
+		}
+		for (int i = 0; i < 10; i += 1) {
+			Instrument inst = new InstBpNoise(ctx, f(freq));
+			playNote(time++, dur, inst, ctx);
 			freq = freq * 1.2;
 		}
 
@@ -59,8 +66,7 @@ public class IIRFilter {
 		waitAndClose(10, ctx);
 	}
 
-	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new Inst(ctx, f(freq));
+	private void playNote(double time, double dur, Instrument i, Ctx ctx) {
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
@@ -77,22 +83,95 @@ public class IIRFilter {
 		}
 	}
 
-	private class Inst implements Instrument {
+	private class InstPlain implements Instrument {
 
 		private AudioOutput out;
 
 		private Oscil toneOsc;
-
+		
 		private ADSR adsr;
 
-		public Inst(Ctx ctx, double freq) {
+		public InstPlain(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
 						
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
-			adsr = new ADSR(1f, 0.05f, 0.3f, 0.05f, 0.5f);
+			
+			adsr = new ADSR(5f, 0.05f, 0.3f, 0.05f, 0.5f);
 
 			toneOsc.patch(adsr);
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
+	}
+
+	private class InstBpSquare implements Instrument {
+
+		private AudioOutput out;
+
+		private Oscil toneOsc;
+		
+		private BandPass bp;
+
+		private ADSR adsr;
+
+		public InstBpSquare(Ctx ctx, double freq) {
+			super();
+			this.out = ctx.out;
+						
+			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
+			bp = new BandPass(600, 100, out.sampleRate());
+			
+			adsr = new ADSR(14f, 0.05f, 0.3f, 0.05f, 0.5f);
+
+			toneOsc.patch(bp).patch(adsr);
+		}
+
+		@Override
+		public void noteOn(float duration) {
+			adsr.noteOn();
+			adsr.patch(out);
+		}
+
+		@Override
+		public void noteOff() {
+			adsr.unpatchAfterRelease(out);
+			adsr.noteOff();
+		}
+
+	}
+
+	private class InstBpNoise implements Instrument {
+
+		private AudioOutput out;
+
+		private Noise noise;
+		
+		private BandPass bp;
+
+		private ADSR adsr;
+
+		public InstBpNoise(Ctx ctx, double freq) {
+			super();
+			this.out = ctx.out;
+						
+			noise = new Noise(10, Tint.WHITE);
+			bp = new BandPass(f(freq), 1, out.sampleRate());
+			
+			adsr = new ADSR(50f, 0.05f, 0.3f, 0.05f, 0.5f);
+
+			noise.patch(bp).patch(adsr);
 		}
 
 		@Override
