@@ -3,21 +3,21 @@ package net.entelijan.tryout;
 import static net.entelijan.util.MinimUtil.*;
 
 import ddf.minim.*;
-import ddf.minim.effects.BandPass;
+import ddf.minim.effects.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
 import ddf.minim.ugens.Noise.Tint;
 import net.entelijan.util.FileLoader;
 
-public class IIRFilter {
+public class IIRFilterImpl {
 
 	private final String fileName = "iirfilter_00.wav";
 	private final boolean recording = false;
 
 	public static void main(String[] args) {
 		try {
-			new IIRFilter().run();
+			new IIRFilterImpl().run();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -59,7 +59,7 @@ public class IIRFilter {
 		{
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
-				Instrument inst = new InstBpSquare(ctx, f(freq));
+				Instrument inst = new InstNotch(ctx, f(freq));
 				playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
@@ -109,7 +109,7 @@ public class IIRFilter {
 			super();
 			this.out = ctx.out;
 
-			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
+			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
 
 			adsr = new ADSR(1f, 0.05f, 0.3f, 0.05f, 0.5f);
 
@@ -130,26 +130,26 @@ public class IIRFilter {
 
 	}
 
-	private class InstBpSquare implements Instrument {
+	private class InstNotch implements Instrument {
 
 		private AudioOutput out;
 
 		private Oscil toneOsc;
 
-		private BandPass bp;
+		private IIRFilter iir;
 
 		private ADSR adsr;
 
-		public InstBpSquare(Ctx ctx, double freq) {
+		public InstNotch(Ctx ctx, double freq) {
 			super();
 			this.out = ctx.out;
 
-			toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
-			bp = new BandPass(600, 100, out.sampleRate());
+			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
+			iir = new NotchFilter(f(freq) + 150, 100, out.sampleRate());
 
-			adsr = new ADSR(14f, 0.05f, 0.3f, 0.05f, 0.5f);
+			adsr = new ADSR(5f, 0.005f, 0.6f, 0.1f, 0.5f);
 
-			toneOsc.patch(bp).patch(adsr);
+			toneOsc.patch(iir).patch(adsr);
 		}
 
 		@Override
@@ -172,7 +172,7 @@ public class IIRFilter {
 
 		private Noise noise;
 
-		private BandPass bp;
+		private IIRFilter iir;
 
 		private ADSR adsr;
 
@@ -181,11 +181,11 @@ public class IIRFilter {
 			this.out = ctx.out;
 
 			noise = new Noise(5, Tint.WHITE);
-			bp = new BandPass(f(freq), 1, out.sampleRate());
+			iir = new BandPass(f(freq), 1, out.sampleRate());
 
-			adsr = new ADSR(15f, 0.05f, 0.6f, 0.05f, 0.5f);
+			adsr = new ADSR(15f, 0.05f, 0.6f, 0f, 0.5f);
 
-			noise.patch(bp).patch(adsr);
+			noise.patch(iir).patch(adsr);
 		}
 
 		@Override
