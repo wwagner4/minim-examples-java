@@ -12,9 +12,10 @@ import net.entelijan.util.FileLoader;
 
 public class FmSynth {
 
-	private final String fileName = "vibrato_00.wav";
+	private final Random ran = new Random();
+
+	private final String fileName = "fmsynth_00.wav";
 	private final boolean recording = false;
-	private final Random ran = new Random(912837L);
 	
 	public static void main(String[] args) {
 		try {
@@ -43,14 +44,14 @@ public class FmSynth {
 
 	private void run(Ctx ctx) throws InterruptedException {
 
-		ctx.out.setTempo(50);
+		ctx.out.setTempo(180);
 		ctx.out.pauseNotes();
 
-		double freq = 150;
-		for (int i = 0; i < 6; i += 1) {
+		double freq = 100;
+		for (int i = 0; i < 16; i += 1) {
 			double baseDur = 1;
-			playNote(i * 0.7 + 0, baseDur * r(4), freq, ctx);
-			freq = freq * 1.2 * r(1.5);
+			playNote(i, baseDur * ranFact(1.1), freq, ctx);
+			freq = freq * 1.1 * ranFact(1.1);
 		}
 
 		if (recording) {
@@ -61,11 +62,11 @@ public class FmSynth {
 	}
 
 	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new InstA(ctx.out, f(freq));
+		Instrument i = new Inst(ctx.out, f(freq));
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
-	private float r(double val) {
+	private float ranFact(double val) {
 		return f(Math.pow(val, ran.nextDouble() * 2.0 - 1.0));
 	}
 
@@ -82,27 +83,32 @@ public class FmSynth {
 		}
 	}
 
-	private static class InstA implements Instrument {
+	private static class Inst implements Instrument {
 
 		private AudioOutput out;
 
-		private Oscil toneOsc;
-		private Oscil lfo;
 
 		private ADSR adsr;
-		private Constant cons;
 
-		public InstA(AudioOutput out, double freq) {
+		public Inst(AudioOutput out, double freq) {
 			super();
 			this.out = out;
 			
-			cons = new Constant(f(freq));
-			lfo = new Oscil(6, 6f, Waves.SINE);
-			toneOsc = new Oscil(0, 0.2f, Waves.TRIANGLE);
-			adsr = new ADSR(5f, 0.01f, 0.1f, 0.15f, 1.5f);
 
-			cons.patch(lfo.offset);
-			lfo.patch(toneOsc.frequency);
+
+			Oscil lfo3 = new Oscil(50f, 20f, Waves.SAW);
+			Constant cons1 = new Constant(f(freq * 0.1));
+			cons1.patch(lfo3.offset);
+			
+			Oscil lfo1 = new Oscil(0, 30f, Waves.SINE);
+			Constant cons0 = new Constant(f(freq));
+			cons0.patch(lfo1.offset);
+			lfo3.patch(lfo1.frequency);
+
+			Oscil toneOsc = new Oscil(0, 0.1f, Waves.SINE);
+			lfo1.patch(toneOsc.frequency);
+			
+			adsr = new ADSR(1f, 0.0001f, 0.2f, 0.05f, 0.5f);
 			toneOsc.patch(adsr);
 		}
 
