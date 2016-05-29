@@ -87,28 +87,25 @@ public class FmSynth {
 
 		private AudioOutput out;
 
-
 		private ADSR adsr;
 
 		public Inst(AudioOutput out, double freq) {
 			super();
 			this.out = out;
-			
 
-
-			Oscil lfo3 = new Oscil(50f, 20f, Waves.SAW);
-			Constant cons1 = new Constant(f(freq * 0.1));
-			cons1.patch(lfo3.offset);
+			Oscil lfo1 = new Oscil(f(freq / 1.3), 200f, Waves.SINE);
+			Constant cons1 = new Constant(f(freq / 5));
+			cons1.patch(lfo1.offset);
 			
-			Oscil lfo1 = new Oscil(0, 30f, Waves.SINE);
+			Oscil lfo0 = new Oscil(0, 50f, Waves.SINE);
+			lfo1.patch(lfo0.frequency);
 			Constant cons0 = new Constant(f(freq));
-			cons0.patch(lfo1.offset);
-			lfo3.patch(lfo1.frequency);
+			cons0.patch(lfo0.offset);
 
-			Oscil toneOsc = new Oscil(0, 0.1f, Waves.SINE);
-			lfo1.patch(toneOsc.frequency);
+			Oscil toneOsc = new Oscil(0, 0.1f, Waves.TRIANGLE);
+			lfo0.patch(toneOsc.frequency);
 			
-			adsr = new ADSR(1f, 0.0001f, 0.2f, 0.05f, 0.5f);
+			adsr = new ADSR(1f, 0.001f, 0.15f, 0.05f, 0.5f);
 			toneOsc.patch(adsr);
 		}
 
