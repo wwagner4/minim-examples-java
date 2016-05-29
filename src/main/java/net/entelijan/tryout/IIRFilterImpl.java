@@ -52,7 +52,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstPlain(ctx, f(freq));
-				//playNote(time++, dur, inst, ctx);
+				playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -60,7 +60,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstNotch(ctx, f(freq));
-				//playNote(time++, dur, inst, ctx);
+				playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -68,7 +68,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstBpNoise(ctx, f(freq));
-				//playNote(time++, dur, inst, ctx);
+				playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -153,7 +153,7 @@ public class IIRFilterImpl {
 			this.out = ctx.out;
 
 			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
-			iir = new NotchFilter(f(freq) + 200, 10, out.sampleRate());
+			iir = new NotchFilter(f(freq), 10, out.sampleRate());
 
 			adsr = new ADSR(5f, 0.005f, 0.6f, 0.1f, 0.5f);
 
