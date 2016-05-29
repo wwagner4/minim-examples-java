@@ -16,9 +16,9 @@ public class Flute implements Instrument {
 
 	private ADSR adsr;
 
-	public Flute(Ctx ctx, double freq) {
+	public Flute(AudioOutput out, double freq) {
 		super();
-		this.out = ctx.out;
+		this.out = out;
 					
 		toneOsc = new Oscil(f(freq), 0.1f, Waves.SQUARE);
 		bp = new BandPass(600, 100, out.sampleRate());
@@ -40,17 +40,5 @@ public class Flute implements Instrument {
 		adsr.noteOff();
 	}
 	
-	private static class Ctx {
-		private AudioOutput out;
-		private AudioRecorder rec;
-
-		public Ctx(AudioOutput out, AudioRecorder rec) {
-			super();
-			this.out = out;
-			this.rec = rec;
-		}
-	}
-
-
 }
 
