@@ -104,7 +104,7 @@ public class DrumMachine {
 	private void play(int time, int bd, int d1, int d2, Ctx ctx) {
 		double t = time + r(1.02, ctx.ran);
 		if (is(bd)) {
-			playBD(t, 0.5, 200, ctx);
+			playBD(t, 0.5, 90, ctx);
 		}
 		if (is(d1)) {
 			playD1(t, 2, 700, ctx);
