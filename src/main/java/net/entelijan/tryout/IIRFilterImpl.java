@@ -52,7 +52,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstPlain(ctx, f(freq));
-				playNote(time++, dur, inst, ctx);
+				 playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -60,7 +60,7 @@ public class IIRFilterImpl {
 			double freq = baseFreq;
 			for (int i = 0; i < 4; i += 1) {
 				Instrument inst = new InstNotch(ctx, f(freq));
-				playNote(time++, dur, inst, ctx);
+				 playNote(time++, dur, inst, ctx);
 				freq = freq * 1.2;
 			}
 		}
@@ -216,7 +216,8 @@ public class IIRFilterImpl {
 
 		private Noise noise;
 
-		private IIRFilter iir;
+		private IIRFilter lp;
+		private IIRFilter hp;
 
 		private ADSR adsr;
 
@@ -224,12 +225,13 @@ public class IIRFilterImpl {
 			super();
 			this.out = ctx.out;
 
-			noise = new Noise(5, Tint.WHITE);
-			iir = new ChebFilter(f(freq), ChebFilter.HP, 0.005f, 3, out.sampleRate());
+			noise = new Noise(5, Tint.RED);
+			hp = new ChebFilter(f(freq), ChebFilter.HP, 0.5f, 5, out.sampleRate());
+			lp = new ChebFilter(f(freq), ChebFilter.LP, 0.5f, 5, out.sampleRate());
 
-			adsr = new ADSR(15f, 0.05f, 0.6f, 0f, 0.5f);
+			adsr = new ADSR(5f, 0.5f, 0.6f, 0.0f, 0.1f);
 
-			noise.patch(iir).patch(adsr);
+			noise.patch(hp).patch(lp).patch(adsr);
 		}
 
 		@Override
