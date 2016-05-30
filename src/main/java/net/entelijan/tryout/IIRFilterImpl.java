@@ -117,9 +117,9 @@ public class IIRFilterImpl {
 			super();
 			this.out = ctx.out;
 
-			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
+			toneOsc = new Oscil(f(freq), 0.1f, Waves.TRIANGLE);
 
-			adsr = new ADSR(1f, 0.05f, 0.3f, 0.05f, 0.5f);
+			adsr = new ADSR(1f, 0.005f, 0.6f, 0.1f, 0.5f);
 
 			toneOsc.patch(adsr);
 		}
@@ -152,7 +152,7 @@ public class IIRFilterImpl {
 			super();
 			this.out = ctx.out;
 
-			toneOsc = new Oscil(f(freq), 0.1f, Waves.SAW);
+			toneOsc = new Oscil(f(freq), 0.1f, Waves.TRIANGLE);
 			iir = new NotchFilter(f(freq), 10, out.sampleRate());
 
 			adsr = new ADSR(5f, 0.005f, 0.6f, 0.1f, 0.5f);
