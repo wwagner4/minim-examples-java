@@ -47,11 +47,11 @@ public class FmSynth {
 		ctx.out.setTempo(180);
 		ctx.out.pauseNotes();
 
-		double freq = 100;
+		double freq = 200;
 		for (int i = 0; i < 16; i += 1) {
 			double baseDur = 1;
 			playNote(i, baseDur * ranFact(1.1), freq, ctx);
-			freq = freq * 1.1 * ranFact(1.1);
+			freq = freq * 1.08 * ranFact(1.1);
 		}
 
 		if (recording) {
@@ -62,7 +62,7 @@ public class FmSynth {
 	}
 
 	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new Inst(ctx.out, f(freq));
+		Instrument i = new Inst0(ctx.out, freq);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
@@ -83,18 +83,18 @@ public class FmSynth {
 		}
 	}
 
-	private static class Inst implements Instrument {
+	private static class Inst0 implements Instrument {
 
 		private AudioOutput out;
 
 		private ADSR adsr;
 
-		public Inst(AudioOutput out, double freq) {
+		public Inst0(AudioOutput out, double freq) {
 			super();
 			this.out = out;
 
-			Oscil lfo1 = new Oscil(f(freq / 1.3), 200f, Waves.SINE);
-			Constant cons1 = new Constant(f(freq / 5));
+			Oscil lfo1 = new Oscil(f(freq / 3), 200f, Waves.SINE);
+			Constant cons1 = new Constant(f(freq / 50));
 			cons1.patch(lfo1.offset);
 			
 			Oscil lfo0 = new Oscil(0, 50f, Waves.SINE);
