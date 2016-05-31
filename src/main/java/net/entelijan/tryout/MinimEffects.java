@@ -10,14 +10,14 @@ import ddf.minim.ugens.*;
 import ddf.minim.ugens.Noise.Tint;
 import net.entelijan.util.FileLoader;
 
-public class IIRFilterImpl {
+public class MinimEffects {
 
 	private final String fileName = "iirfilter_00.wav";
 	private final boolean recording = false;
 
 	public static void main(String[] args) {
 		try {
-			new IIRFilterImpl().run();
+			new MinimEffects().run();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
