@@ -9,14 +9,14 @@ import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import net.entelijan.util.FileLoader;
 
-public class FiboTriangle {
+public class DefaultInst {
 	
 	private final String fileName = "fibo_triangle_00.wav";
 	private boolean record = false;
 	
 	public static void main(String[] args) {
 		try {
-			new FiboTriangle().run();
+			new DefaultInst().run();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
