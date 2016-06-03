@@ -8,7 +8,7 @@ import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
 import net.entelijan.util.*;
 
-public class TickrateWithSample {
+public class SamplerTryout {
 
 	private enum EnumSample {
 		A, B, C
@@ -19,7 +19,7 @@ public class TickrateWithSample {
 
 	public static void main(String[] args) {
 		try {
-			new TickrateWithSample().run();
+			new SamplerTryout().run();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
