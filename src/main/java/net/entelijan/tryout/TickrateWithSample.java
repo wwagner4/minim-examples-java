@@ -10,6 +10,10 @@ import net.entelijan.util.*;
 
 public class TickrateWithSample {
 
+	private enum EnumSample {
+		A, B, C
+	};
+
 	private final String fileName = "tickrate_00.wav";
 	private final boolean recording = false;
 
@@ -33,7 +37,9 @@ public class TickrateWithSample {
 			rec = minim.createRecorder(out, fileName);
 		}
 
-		Ctx ctx = new Ctx(out, rec, minim);
+		Holder holder = new Holder(minim);
+
+		Ctx ctx = new Ctx(out, rec, holder);
 
 		run(ctx);
 	}
@@ -43,8 +49,11 @@ public class TickrateWithSample {
 		ctx.out.setTempo(180);
 		ctx.out.pauseNotes();
 
-		playNote(0, 5, 300, ctx);
-		playNote(1, 5, 300, ctx);
+		playNote(0, EnumSample.A, ctx);
+		playNote(1, EnumSample.C, ctx);
+		playNote(3, EnumSample.C, ctx);
+		playNote(5, EnumSample.B, ctx);
+		playNote(6, EnumSample.B, ctx);
 
 		if (recording) {
 			ctx.rec.beginRecord();
@@ -53,9 +62,9 @@ public class TickrateWithSample {
 		waitAndClose(10, ctx);
 	}
 
-	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new Inst(ctx, freq);
-		ctx.out.playNote(f(time), f(dur), i);
+	private void playNote(double time, EnumSample enumSample, Ctx ctx) {
+		Instrument i = new Inst(ctx, enumSample);
+		ctx.out.playNote(f(time), 5, i);
 	}
 
 	private void waitAndClose(int seconds, Ctx ctx) throws InterruptedException {
@@ -77,11 +86,23 @@ public class TickrateWithSample {
 
 		private Sampler sampler;
 
-		public Inst(Ctx ctx, double freq) {
+		public Inst(Ctx ctx, EnumSample enumSample) {
 			super();
 			this.out = ctx.out;
-			
-			sampler = new Sampler("h3.wav", 4, ctx.minim);
+			switch (enumSample) {
+			case A:
+				sampler = ctx.holder.sampler1;
+				break;
+			case B:
+				sampler = ctx.holder.sampler2;
+				break;
+			case C:
+				sampler = ctx.holder.sampler3;
+				break;
+			default:
+				throw new IllegalStateException("Unknown value in enum sample: " + enumSample);
+			}
+
 		}
 
 		@Override
@@ -98,16 +119,31 @@ public class TickrateWithSample {
 
 	}
 
+	private static class Holder {
+
+		private Sampler sampler1;
+		private Sampler sampler2;
+		private Sampler sampler3;
+
+		public Holder(Minim minim) {
+			super();
+			sampler1 = new Sampler("h1.wav", 4, minim);
+			sampler2 = new Sampler("h2.wav", 4, minim);
+			sampler3 = new Sampler("h3.wav", 4, minim);
+		}
+
+	}
+
 	private static class Ctx {
 		private AudioOutput out;
 		private AudioRecorder rec;
-		private Minim minim;
+		private Holder holder;
 
-		public Ctx(AudioOutput out, AudioRecorder rec, Minim minim) {
+		public Ctx(AudioOutput out, AudioRecorder rec, Holder holder) {
 			super();
 			this.out = out;
 			this.rec = rec;
-			this.minim = minim;
+			this.holder = holder;
 		}
 	}
 
