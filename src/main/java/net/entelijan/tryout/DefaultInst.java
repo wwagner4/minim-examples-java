@@ -7,7 +7,7 @@ import java.util.Random;
 import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
-import net.entelijan.util.FileLoader;
+import net.entelijan.util.FileLoaderUserHome;
 
 public class DefaultInst {
 	
@@ -24,7 +24,7 @@ public class DefaultInst {
 
 	private void run() throws InterruptedException {
 		Random ran = new Random();
-		FileLoader fileLoader = new FileLoader();
+		FileLoaderUserHome fileLoader = new FileLoaderUserHome();
 		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
 		Minim minim = new Minim(serviceProvider);
 		System.out.println("Created minim: " + minim);

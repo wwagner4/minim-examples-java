@@ -6,7 +6,7 @@ import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
-import net.entelijan.util.FileLoader;
+import net.entelijan.util.FileLoaderUserHome;
 
 public class TickrateWithSample {
 
@@ -23,7 +23,7 @@ public class TickrateWithSample {
 
 	private void run() throws InterruptedException {
 
-		FileLoader fileLoader = new FileLoader();
+		FileLoaderUserHome fileLoader = new FileLoaderUserHome();
 		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
 		Minim minim = new Minim(serviceProvider);
 		AudioOutput out = minim.getLineOut();
@@ -33,7 +33,7 @@ public class TickrateWithSample {
 			rec = minim.createRecorder(out, fileName);
 		}
 
-		Ctx ctx = new Ctx(out, rec);
+		Ctx ctx = new Ctx(out, rec, minim);
 
 		run(ctx);
 	}
@@ -53,7 +53,7 @@ public class TickrateWithSample {
 	}
 
 	private void playNote(double time, double dur, double freq, Ctx ctx) {
-		Instrument i = new Inst(ctx.out, freq);
+		Instrument i = new Inst(ctx, freq);
 		ctx.out.playNote(f(time), f(dur), i);
 	}
 
@@ -74,38 +74,25 @@ public class TickrateWithSample {
 
 		private AudioOutput out;
 
-		private ADSR adsr;
+		private Sampler sampler;
 
-		public Inst(AudioOutput out, double freq) {
+		public Inst(Ctx ctx, double freq) {
 			super();
-			this.out = out;
-
-			Oscil lfo1 = new Oscil(200f, 200f, Waves.SQUARE);
-			Constant cons1 = new Constant(100f);
-			cons1.patch(lfo1.offset);
-
-			Oscil lfo0 = new Oscil(0, 50f, Waves.SQUARE);
-			lfo1.patch(lfo0.frequency);
-			Constant cons0 = new Constant(f(freq));
-			cons0.patch(lfo0.offset);
-
-			Oscil toneOsc = new Oscil(0, 0.1f, Waves.SINE);
-			lfo0.patch(toneOsc.frequency);
-
-			adsr = new ADSR(1f, 0.001f, 0.4f, 0.05f, 0.5f);
-			toneOsc.patch(adsr);
+			this.out = ctx.out;
+			
+			sampler = new Sampler("h1.wav", 4, ctx.minim);
 		}
 
 		@Override
 		public void noteOn(float duration) {
-			adsr.noteOn();
-			adsr.patch(out);
+			sampler.patch(out);
+			sampler.trigger();
 		}
 
 		@Override
 		public void noteOff() {
-			adsr.unpatchAfterRelease(out);
-			adsr.noteOff();
+			sampler.unpatch(out);
+			sampler.stop();
 		}
 
 	}
@@ -113,11 +100,13 @@ public class TickrateWithSample {
 	private static class Ctx {
 		private AudioOutput out;
 		private AudioRecorder rec;
+		private Minim minim;
 
-		public Ctx(AudioOutput out, AudioRecorder rec) {
+		public Ctx(AudioOutput out, AudioRecorder rec, Minim minim) {
 			super();
 			this.out = out;
 			this.rec = rec;
+			this.minim = minim;
 		}
 	}
 

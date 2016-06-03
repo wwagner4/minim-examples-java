@@ -10,7 +10,7 @@ import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
 import ddf.minim.ugens.MoogFilter.Type;
 import ddf.minim.ugens.Noise.Tint;
-import net.entelijan.util.FileLoader;
+import net.entelijan.util.FileLoaderUserHome;
 
 public class MyInst {
 
@@ -33,7 +33,7 @@ public class MyInst {
 		
 		Random ran = new Random();
 		
-		FileLoader fileLoader = new FileLoader();
+		FileLoaderUserHome fileLoader = new FileLoaderUserHome();
 		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
 		Minim minim = new Minim(serviceProvider);
 		AudioOutput out = minim.getLineOut();

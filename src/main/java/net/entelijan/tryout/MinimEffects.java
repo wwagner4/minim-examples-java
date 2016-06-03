@@ -8,7 +8,7 @@ import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
 import ddf.minim.ugens.Noise.Tint;
-import net.entelijan.util.FileLoader;
+import net.entelijan.util.FileLoaderUserHome;
 
 public class MinimEffects {
 
@@ -25,7 +25,7 @@ public class MinimEffects {
 
 	private void run() throws InterruptedException {
 
-		FileLoader fileLoader = new FileLoader();
+		FileLoaderUserHome fileLoader = new FileLoaderUserHome();
 		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
 		Minim minim = new Minim(serviceProvider);
 		AudioOutput out = minim.getLineOut();

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-public class FileLoader {
+public class FileLoaderUserHome {
 
 	public String sketchPath(String fileName) {
 		File file = getCreateFile(fileName);
