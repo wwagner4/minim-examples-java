@@ -6,7 +6,7 @@ import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
-import net.entelijan.util.FileLoaderUserHome;
+import net.entelijan.util.*;
 
 public class TickrateWithSample {
 
@@ -23,7 +23,7 @@ public class TickrateWithSample {
 
 	private void run() throws InterruptedException {
 
-		FileLoaderUserHome fileLoader = new FileLoaderUserHome();
+		FileLoaderResources fileLoader = new FileLoaderResources();
 		MinimServiceProvider serviceProvider = new JSMinim(fileLoader);
 		Minim minim = new Minim(serviceProvider);
 		AudioOutput out = minim.getLineOut();
@@ -43,7 +43,8 @@ public class TickrateWithSample {
 		ctx.out.setTempo(180);
 		ctx.out.pauseNotes();
 
-		playNote(0, 1, 300, ctx);
+		playNote(0, 5, 300, ctx);
+		playNote(1, 5, 300, ctx);
 
 		if (recording) {
 			ctx.rec.beginRecord();
@@ -80,7 +81,7 @@ public class TickrateWithSample {
 			super();
 			this.out = ctx.out;
 			
-			sampler = new Sampler("h1.wav", 4, ctx.minim);
+			sampler = new Sampler("h3.wav", 4, ctx.minim);
 		}
 
 		@Override
