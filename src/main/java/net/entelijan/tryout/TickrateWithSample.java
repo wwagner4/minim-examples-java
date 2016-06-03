@@ -2,18 +2,13 @@ package net.entelijan.tryout;
 
 import static net.entelijan.util.MinimUtil.*;
 
-import java.util.Random;
-
 import ddf.minim.*;
 import ddf.minim.javasound.JSMinim;
 import ddf.minim.spi.MinimServiceProvider;
 import ddf.minim.ugens.*;
-import ddf.minim.ugens.Noise.Tint;
 import net.entelijan.util.FileLoader;
 
 public class TickrateWithSample {
-
-	private final Random ran = new Random();
 
 	private final String fileName = "tickrate_00.wav";
 	private final boolean recording = false;
