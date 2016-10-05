@@ -4,18 +4,17 @@
 	<groupId>net.entelijan</groupId>
 	<artifactId>minim-examples-java</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	
+
 	<name>minim-examples-java</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>net.entelijan</groupId>
-			<artifactId>minim</artifactId>
-			<version>1.0.0</version>
-			<type>jar</type>
+			<groupId>com.github.nifty-gui</groupId>
+			<artifactId>nifty-minim-soundsystem</artifactId>
+			<version>1.4.2</version>
 		</dependency>
 	</dependencies>
-	
+
 	<repositories>
 		<repository>
 			<snapshots>
@@ -26,7 +25,7 @@
 			<url>http://dl.bintray.com/wwagner4/maven</url>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<plugins>
 			<plugin>
