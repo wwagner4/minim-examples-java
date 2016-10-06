@@ -12,17 +12,22 @@ public class PlaySineAdsrTryout {
 
 		Minim minim = createMinim();
 		AudioOutput sink = minim.getLineOut();
+		ADSR adsr = new ADSR(1.0f, 0.01f, 0.5f, 0.5f, 2.0f); 
 
 		Oscil oscil = createOscil(444f, 0.1f);
 
-		oscil.patch(sink);
+		oscil.patch(adsr);
+		adsr.patch(sink);
+		System.out.println("note on");
+		adsr.noteOn();
 
-		pause(5_000);
-		System.out.println("unpatching");
-		oscil.unpatch(sink);
+		pause(2_000);
+		System.out.println("note off");
+		adsr.noteOff();
 
-		pause(1_000);
+		pause(4_000);
 		System.out.println("stopping");
+//		oscil.unpatch(sink);
 		minim.stop();
 
 	}
