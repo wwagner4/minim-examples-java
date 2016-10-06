@@ -1,5 +1,6 @@
 package net.entelijan.tryout;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import akka.actor.*;
@@ -10,6 +11,7 @@ public class AkkaTryout {
 	static class MusicActor extends UntypedActor {
 
 		private int msgCount = 0;
+		Optional<Long> latestTime = Optional.empty();
 
 		public static Props props() {
 			return Props.create(MusicActor.class);
@@ -22,7 +24,12 @@ public class AkkaTryout {
 				System.out.printf("Received music event %3d %n", msgCount);
 			} else if (message instanceof TimeEvent) {
 				TimeEvent te = (TimeEvent) message;
-				System.out.printf("Received time event %30d %n", te.time);
+				if (latestTime.isPresent()) {
+					System.out.printf("Received time event %20d diff: %10d %n", te.time, te.time - latestTime.get());
+					latestTime = Optional.of(te.time);
+				} else {
+					latestTime = Optional.of(te.time);
+				}
 			} else {
 				unhandled(message);
 			}
@@ -49,14 +56,12 @@ public class AkkaTryout {
 
 		ActorRef musicActor = sys.actorOf(MusicActor.props());
 
-		sys.scheduler().schedule(FiniteDuration.create(2, TimeUnit.SECONDS),
-				FiniteDuration.create(100, TimeUnit.MILLISECONDS), new Runnable() {
-
-					@Override
-					public void run() {
-						musicActor.tell(new TimeEvent(System.nanoTime()), ActorRef.noSender());
-					}
-				}, sys.dispatcher());
+		FiniteDuration zero = FiniteDuration.create(0, TimeUnit.SECONDS);
+		// FiniteDuration interval = FiniteDuration.create(7813,
+		// TimeUnit.MICROSECONDS);
+		FiniteDuration interval = FiniteDuration.create(100, TimeUnit.MILLISECONDS);
+		sys.scheduler().schedule(zero, interval,
+				() -> musicActor.tell(new TimeEvent(System.nanoTime()), ActorRef.noSender()), sys.dispatcher());
 
 		for (int i = 0; i < 10; i++) {
 			if (i % 3 == 0) {
