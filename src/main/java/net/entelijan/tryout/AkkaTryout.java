@@ -8,6 +8,10 @@ import scala.concurrent.duration.FiniteDuration;
 
 public class AkkaTryout {
 
+	// private static final FiniteDuration INTERVAL =
+	// FiniteDuration.create(7813, TimeUnit.MICROSECONDS);
+	private static final FiniteDuration INTERVAL = FiniteDuration.create(300, TimeUnit.MILLISECONDS);
+
 	static class MusicActor extends UntypedActor {
 
 		private int msgCount = 0;
@@ -25,7 +29,10 @@ public class AkkaTryout {
 			} else if (message instanceof TimeEvent) {
 				TimeEvent te = (TimeEvent) message;
 				if (latestTime.isPresent()) {
-					System.out.printf("Received time event %20d diff: %10d %n", te.time, te.time - latestTime.get());
+					long diff = te.time - latestTime.get();
+					double distr = (diff - INTERVAL.toNanos()) / 1_000_000.0;
+					System.out.printf("Received time event %5d %20d diff: %10d distr[ms]:%10.3f %n", msgCount, te.time,
+							diff, distr);
 					latestTime = Optional.of(te.time);
 				} else {
 					latestTime = Optional.of(te.time);
@@ -57,10 +64,7 @@ public class AkkaTryout {
 		ActorRef musicActor = sys.actorOf(MusicActor.props());
 
 		FiniteDuration zero = FiniteDuration.create(0, TimeUnit.SECONDS);
-		// FiniteDuration interval = FiniteDuration.create(7813,
-		// TimeUnit.MICROSECONDS);
-		FiniteDuration interval = FiniteDuration.create(100, TimeUnit.MILLISECONDS);
-		sys.scheduler().schedule(zero, interval,
+		sys.scheduler().schedule(zero, INTERVAL,
 				() -> musicActor.tell(new TimeEvent(System.nanoTime()), ActorRef.noSender()), sys.dispatcher());
 
 		for (int i = 0; i < 10; i++) {
@@ -79,7 +83,7 @@ public class AkkaTryout {
 
 	private static void pause(int timeInMilliseconds) {
 		try {
-			Thread.sleep(timeInMilliseconds);
+			TimeUnit.MILLISECONDS.sleep(timeInMilliseconds);
 		} catch (InterruptedException e) {
 			// Nothing to do here
 		}
